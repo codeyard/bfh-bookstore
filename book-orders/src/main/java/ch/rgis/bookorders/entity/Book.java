@@ -2,7 +2,6 @@ package ch.rgis.bookorders.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.Id;
 import java.math.BigDecimal;
 
 @Embeddable
@@ -22,6 +21,7 @@ public class Book {
 
     @Column(nullable = false)
     private BigDecimal price;
+
 
     // <editor-fold desc="Getter and Setter">
 

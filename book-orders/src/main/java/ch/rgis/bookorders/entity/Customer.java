@@ -21,7 +21,10 @@ public class Customer {
     private String email;
 
     @Column(nullable = false, unique = true)
-    private String userName;
+    private String username;
+
+    @Embedded
+    private CreditCard creditCard;
 
 
     // <editor-fold desc="Getter and Setter">
@@ -58,12 +61,12 @@ public class Customer {
         this.email = email;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String userName) {
+        this.username = userName;
     }
 
     // </editor-fold>

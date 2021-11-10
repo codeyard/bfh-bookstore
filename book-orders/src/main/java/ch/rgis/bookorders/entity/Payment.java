@@ -20,6 +20,7 @@ public class Payment {
     private String creditCardNumber;
     private String transactionId;
 
+
     // <editor-fold desc="Getter and Setter">
 
     public Long getId() {

@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
+@Table(name = "book_order")
 public class Order {
 
     @Id
     private Long id;
 
+    @Column(name = "order_date", nullable = false)
     private LocalDateTime date;
 
     private BigDecimal amount;
@@ -23,6 +25,10 @@ public class Order {
     // IT CAN'T BE SET AS YOU CAN ORDER AS YOU SHOULD BE ABLE TO
     @OneToMany(mappedBy = "order")
     private Set<OrderItem> orderItems;
+
+    @Embedded
+    private Address address;
+
 
     // <editor-fold desc="Getter and Setter">
 
