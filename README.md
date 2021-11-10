@@ -10,5 +10,5 @@ docker run --name postgres-book-catalog -d -p5432:5432 -e POSTGRES_DB=bookcatalo
 
 book-orders:
 ```
-docker run --name postgres-book-orders -d -p5433:5433 -e POSTGRES_DB=bookorders -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=admin postgres
+docker run --name postgres-book-orders -d -p5401:5432 -e POSTGRES_DB=bookorders -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=admin postgres
 ```
