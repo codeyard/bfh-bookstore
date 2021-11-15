@@ -9,18 +9,14 @@ import java.math.BigDecimal;
 public class Book {
 
     @Id
-    @Column(nullable = false)
     private String isbn;
 
-    @Column(nullable = false)
     private String title;
 
     private String subtitle;
 
-    @Column(nullable = false)
     private String authors;
 
-    @Column(nullable = false)
     private String publisher;
 
     private Integer publicationYear;
@@ -28,7 +24,6 @@ public class Book {
     private String description;
     private String imageUrl;
 
-    @Column(nullable = false)
     private BigDecimal price;
 
 

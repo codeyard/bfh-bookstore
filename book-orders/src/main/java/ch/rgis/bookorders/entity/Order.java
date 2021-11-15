@@ -13,7 +13,7 @@ public class Order {
     @Id
     private Long id;
 
-    @Column(name = "order_date", nullable = false)
+    @Column(name = "order_date")
     private LocalDateTime date;
 
     private BigDecimal amount;

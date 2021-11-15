@@ -10,10 +10,9 @@ public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "payment_seq")
     @SequenceGenerator(name = "payment_seq", sequenceName = "payment_seq", initialValue = 1000, allocationSize = 50)
-    @Column(nullable = false)
     private Long id;
 
-    @Column(name = "payment_date", nullable = false)
+    @Column(name = "payment_date")
     private LocalDateTime date;
 
     private BigDecimal amount;

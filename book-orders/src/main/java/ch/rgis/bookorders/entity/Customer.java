@@ -8,22 +8,17 @@ public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customer_seq")
     @SequenceGenerator(name = "customer_seq", sequenceName = "customer_seq", initialValue = 10000, allocationSize = 50)
-    @Column(nullable = false)
     private Long id;
 
-    @Column(nullable = false)
     private String firstName;
 
-    @Column(nullable = false)
     private String lastName;
 
-    @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false, unique = true)
     private String username;
 
-    @Embedded
+    @Embedded()
     private CreditCard creditCard;
 
 

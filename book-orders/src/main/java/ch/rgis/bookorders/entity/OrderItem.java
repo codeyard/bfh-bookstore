@@ -6,10 +6,8 @@ import javax.persistence.*;
 public class OrderItem {
 
     @Id
-    @Column(nullable = false)
     private Long id;
 
-    @Column(nullable = false)
     private Integer quantity;
 
     @Embedded

@@ -2,24 +2,20 @@ package ch.rgis.bookorders.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Id;
 import java.math.BigDecimal;
 
 @Embeddable
 public class Book {
 
-    @Column(nullable = false)
     private String isbn;
 
-    @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
     private String authors;
 
-    @Column(nullable = false)
     private String publisher;
 
-    @Column(nullable = false)
     private BigDecimal price;
 
 
