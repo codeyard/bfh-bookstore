@@ -26,10 +26,10 @@ class CustomerRepositoryTest {
     // Query 1: Find Customer by specific E-Mail address
     @Test
     void findUserByEmail_foundOne() {
-        Optional<Customer> customer = customerRepository.findByEmail("NUNIGU@GMAIL.COM");
+        Optional<Customer> customer = customerRepository.findByEmail("nunigu@gmail.com");
 
         assertTrue(customer.isPresent());
-        assertEquals("IGOR", customer.get().getUsername());
+        assertEquals("Igor", customer.get().getUsername());
     }
 
     @Test
@@ -46,7 +46,7 @@ class CustomerRepositoryTest {
         List<CustomerInfoDTO> customerList = customerRepository.findCustomersByName("go");
 
         assertEquals(1, customerList.size());
-        assertEquals("IGOR", customerList.get(0).firstName());
+        assertEquals("Igor", customerList.get(0).firstName());
     }
 
     @Test
