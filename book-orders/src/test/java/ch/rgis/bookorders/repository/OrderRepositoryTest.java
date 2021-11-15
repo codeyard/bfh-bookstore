@@ -33,21 +33,21 @@ class OrderRepositoryTest {
     void findById_findOne() {
         Optional<Order> order = orderRepository.findById(100000L);
         assertTrue(order.isPresent());
-        assertEquals(1, order.get().getOrderItems().size());
+        assertEquals(5, order.get().getOrderItems().size());
 
-        order.get().getOrderItems().stream()
+        /*order.get().getOrderItems().stream()
             .filter(orderItem -> orderItem.getBook().getTitle().equalsIgnoreCase("shining"))
             .peek(orderItem -> {
                 Book book = orderItem.getBook();
                 assertEquals("Shining", book.getTitle());
                 assertEquals("Stephen King", book.getAuthors());
                 assertEquals("Bastei", book.getPublisher());
-            });
+            });*/
     }
 
     @Test
     void findById_findNone() {
-        Optional<Order> order = orderRepository.findById(100001L);
+        Optional<Order> order = orderRepository.findById(100021L);
         assertFalse(order.isPresent());
     }
 
