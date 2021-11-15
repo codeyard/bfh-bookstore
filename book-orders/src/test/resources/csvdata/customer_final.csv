@@ -1,0 +1,21 @@
+,id,username,first_name,last_name,email,address_street,address_city,address_state_province,address_postal_code,address_country,credit_card_type,credit_card_number,credit_card_expiration_month,credit_card_expiration_year
+0,10000,cscoular0,Corabelle,Scoular,cscoular0@tinyurl.com,Myrtle,Bern,BE,3030,Switzerland,MASTER_CARD,4041377212507250,4,2028
+1,10001,shardstaff1,Sherm,Hardstaff,shardstaff1@nymag.com,Vidon,Zürich,ZH,8023,Switzerland,VISA,5007668130670413,6,2027
+2,10002,kodempsey2,Kass,O'Dempsey,kodempsey2@cbsnews.com,Corscot,Thun,BE,3604,Switzerland,VISA,5100137730185616,11,2026
+3,10003,acalver3,Almire,Calver,acalver3@washingtonpost.com,Forest Run,Luzern,LU,6015,Switzerland,MASTER_CARD,5048372463443966,2,2023
+4,10004,damaya4,Dionne,Amaya,damaya4@istockphoto.com,Valley Edge,Luzern,LU,6015,Switzerland,VISA,5048372463443966,6,2024
+5,10005,abaudacci5,Alysia,Baudacci,abaudacci5@angelfire.com,Rutledge,Bern,BE,3030,Switzerland,MASTER_CARD,5048370170589568,11,2026
+6,10006,acluney6,Angil,Cluney,acluney6@webs.com,Dapin,Basel,BS,4085,Switzerland,MASTER_CARD,5007668130670413,1,2023
+7,10007,cfforde7,Chrisy,Fforde,cfforde7@dailymotion.com,La Follette,Zürich,ZH,8023,Switzerland,MASTER_CARD,4041377212507250,5,2024
+8,10008,kjefford8,Katee,Jefford,kjefford8@istockphoto.com,Bayside,Thun,BE,3604,Switzerland,MASTER_CARD,5100174824459060,7,2024
+9,10009,kyeaman9,Krystalle,Yeaman,kyeaman9@prlog.org,Cascade,Basel,BS,4024,Switzerland,MASTER_CARD,5048370170589568,3,2023
+10,10010,cpryora,Cynthia,Pryor,cpryora@huffingtonpost.com,Sachs,Basel,BS,4085,Switzerland,VISA,4017958426231,12,2024
+11,10011,ryansonsb,Rivalee,Yansons,ryansonsb@pen.io,Meadow Ridge,Basel,BS,4055,Switzerland,VISA,5007668130670413,5,2022
+12,10012,rlethamc,Richy,Letham,rlethamc@ox.ac.uk,Novick,Basel,BS,4010,Switzerland,MASTER_CARD,4017958426231,6,2023
+13,10013,mcribbinsd,Marline,Cribbins,mcribbinsd@eventbrite.com,Laurel,Zürich,ZH,8031,Switzerland,VISA,5048370170589568,3,2024
+14,10014,rlambine,Reinhold,Lambin,rlambine@diigo.com,Gerald,Bern,BE,3030,Switzerland,MASTER_CARD,5048370170589568,4,2028
+15,10015,gtathamf,Guglielmo,Tatham,gtathamf@google.pl,Oak,Zürich,ZH,8023,Switzerland,VISA,4017958426231,11,2024
+16,10016,ckendellg,Con,Kendell,ckendellg@paginegialle.it,Charing Cross,Chur,GR,7006,Switzerland,VISA,5048372463443966,12,2024
+17,10017,ecauseyh,Ely,Causey,ecauseyh@comcast.net,Kings,Luzern,LU,6015,Switzerland,VISA,5048372463443966,8,2024
+18,10018,sreami,Sibella,Ream,sreami@yolasite.com,Doe Crossing,Winterthur,ZH,8411,Switzerland,MASTER_CARD,4041591690600011,2,2027
+19,10019,mchatburnj,Moses,Chatburn,mchatburnj@icq.com,Farmco,Zürich,ZH,8042,Switzerland,MASTER_CARD,5100174824459060,5,2027
