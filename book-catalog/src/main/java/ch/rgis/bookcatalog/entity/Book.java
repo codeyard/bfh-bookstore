@@ -1,6 +1,5 @@
 package ch.rgis.bookcatalog.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.math.BigDecimal;

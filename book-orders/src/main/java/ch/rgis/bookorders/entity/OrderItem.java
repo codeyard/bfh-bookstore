@@ -1,21 +1,20 @@
 package ch.rgis.bookorders.entity;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 public class OrderItem {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "order_item_seq")
+    @SequenceGenerator(name = "order_item_seq", sequenceName = "order_item_seq", initialValue = 1000, allocationSize = 50)
     private Long id;
 
     private Integer quantity;
 
     @Embedded
     private Book book;
-
-    @ManyToOne(optional = false)
-    private Order order;
-
 
     // <editor-fold desc="Getter and Setter">
 
@@ -43,8 +42,23 @@ public class OrderItem {
         this.book = book;
     }
 
-
     // </editor-fold>
 
 
+    /**
+     * A OrderItem is compared on a book level!
+     * it cannot state the same book twice with different quantities
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OrderItem orderItem = (OrderItem) o;
+        return book.equals(orderItem.book);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(book);
+    }
 }

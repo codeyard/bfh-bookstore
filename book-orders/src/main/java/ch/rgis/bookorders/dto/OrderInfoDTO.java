@@ -5,4 +5,4 @@ import ch.rgis.bookorders.entity.OrderStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public record OrderInfoDto(Long id, LocalDateTime date, BigDecimal amount, OrderStatus status){}
+public record OrderInfoDTO(Long id, LocalDateTime date, BigDecimal amount, OrderStatus status){}

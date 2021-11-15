@@ -1,5 +1,5 @@
 package ch.rgis.bookorders.entity;
 
 public enum OrderStatus {
-    ACCEPTED, PROCESSING, SHIPPED, CANCELLED;
+    ACCEPTED, PROCESSING, SHIPPED, CANCELLED
 }

@@ -19,6 +19,9 @@ public class Customer {
     private String username;
 
     @Embedded()
+    private Address address;
+
+    @Embedded()
     private CreditCard creditCard;
 
 
@@ -60,9 +63,26 @@ public class Customer {
         return username;
     }
 
-    public void setUsername(String userName) {
-        this.username = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public CreditCard getCreditCard() {
+        return creditCard;
+    }
+
+    public void setCreditCard(CreditCard creditCard) {
+        this.creditCard = creditCard;
+    }
+
 
     // </editor-fold>
 }
