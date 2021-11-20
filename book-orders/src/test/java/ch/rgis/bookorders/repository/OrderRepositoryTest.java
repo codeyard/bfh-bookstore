@@ -10,7 +10,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,14 +37,14 @@ class OrderRepositoryTest {
         assertTrue(order.isPresent());
         assertEquals(5, order.get().getOrderItems().size());
 
-        /*order.get().getOrderItems().stream()
-            .filter(orderItem -> orderItem.getBook().getTitle().equalsIgnoreCase("shining"))
+        order.get().getOrderItems().stream()
+            .filter(orderItem -> orderItem.getBook().getTitle().equalsIgnoreCase("All Tomorrow's Parties"))
             .peek(orderItem -> {
                 Book book = orderItem.getBook();
-                assertEquals("Shining", book.getTitle());
-                assertEquals("Stephen King", book.getAuthors());
-                assertEquals("Bastei", book.getPublisher());
-            });*/
+                assertEquals("All Tomorrow's Parties", book.getTitle());
+                assertEquals("Gerald Lannin", book.getAuthors());
+                assertEquals("Fielding Ashdown", book.getPublisher());
+            });
     }
 
     @Test
@@ -57,26 +59,30 @@ class OrderRepositoryTest {
     void findOrdersByCustomerAndPeriodWithSpringJpaParameters_findOne() {
         Customer customer = customerRepository.getById(10000L);
         LocalDateTime dateTo = LocalDateTime.now();
-        LocalDateTime dateFrom = LocalDateTime.now().minusDays(10);
+        LocalDateTime dateFrom = LocalDateTime.of(
+                LocalDate.of(2021, 2, 2),
+                LocalTime.of(0, 0));
 
         List<OrderInfoDTO> orders = orderRepository.findAllByCustomerAndDateGreaterThanEqualAndDateLessThanEqual(
             customer, dateFrom, dateTo
         );
-        orders.forEach(order -> System.out.println(order.amount()));
+        orders.forEach(order -> System.out.println("ORDER " + order.amount()));
 
         assertEquals(1, orders.size());
-        assertEquals(new BigDecimal("77.85"), orders.get(0).amount());
+        assertEquals(new BigDecimal("1685.14"), orders.get(0).amount());
     }
 
     @Test
     void findOrdersByCustomerAndPeriod_findOne() {
         LocalDateTime dateTo = LocalDateTime.now();
-        LocalDateTime dateFrom = LocalDateTime.now().minusDays(10);
+        LocalDateTime dateFrom = LocalDateTime.of(
+                LocalDate.of(2021, 2, 2),
+                LocalTime.of(0, 0));
 
         List<OrderInfoDTO> orders = orderRepository.findOrdersByCustomerAndPeriod(10000L, dateFrom, dateTo);
         orders.forEach(order -> System.out.println(order.amount()));
 
         assertEquals(1, orders.size());
-        assertEquals(new BigDecimal("77.85"), orders.get(0).amount());
+        assertEquals(new BigDecimal("1685.14"), orders.get(0).amount());
     }
 }
