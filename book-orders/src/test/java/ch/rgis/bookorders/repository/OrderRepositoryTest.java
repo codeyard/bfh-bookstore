@@ -1,5 +1,6 @@
 package ch.rgis.bookorders.repository;
 
+import ch.rgis.bookorders.dto.CustomerOrderStatistics;
 import ch.rgis.bookorders.dto.OrderInfoDTO;
 import ch.rgis.bookorders.entity.Book;
 import ch.rgis.bookorders.entity.Customer;
@@ -13,9 +14,12 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -85,4 +89,61 @@ class OrderRepositoryTest {
         assertEquals(1, orders.size());
         assertEquals(new BigDecimal("1685.14"), orders.get(0).amount());
     }
+
+    // Query 7: Get Order Statistics with total amount, number of positions and average order amount of all orders grouped by year and customer
+    /**
+     * All Customers have an Order in Test Database
+     */
+    @Test
+    void testStatistics_foundAll() {
+        List<CustomerOrderStatistics> allCustomerOrderStatistics = orderRepository.getAllCustomerOrderStatistics();
+        List<Customer> allCustomer = customerRepository.findAll();
+
+        assertEquals(allCustomer.size(), allCustomerOrderStatistics.size());
+
+    }
+
+    @Test
+    void testStatistics_foundOne() {
+        List<CustomerOrderStatistics> allCustomerOrderStatistics = orderRepository.getAllCustomerOrderStatistics();
+
+        List<CustomerOrderStatistics> cluney_angil = allCustomerOrderStatistics.stream()
+                .filter(customerOrderStatistics -> customerOrderStatistics.getCustomerId() == 10006L)
+                .peek(customerOrderStatistics -> {
+                    assertEquals("Cluney Angil", customerOrderStatistics.getCustomerName());
+                    assertEquals(5, customerOrderStatistics.getOrderItemsCount());
+                    assertEquals(341.408, customerOrderStatistics.getAverageOrderValue());
+                    assertEquals(1707.04, customerOrderStatistics.getTotalAmount());
+                    assertEquals(2021, customerOrderStatistics.getYear());
+                })
+                .collect(Collectors.toList());
+
+        assertEquals(1, cluney_angil.size());
+    }
+
+    @Test
+    void testStatistics_foundCustomerWithMultipleOrdersInDifferentYears() {
+        List<CustomerOrderStatistics> allCustomerOrderStatistics = orderRepository.getAllCustomerOrderStatistics();
+        Map<Long, Long> mappedCount = allCustomerOrderStatistics
+                .stream().collect(groupingBy(CustomerOrderStatistics::getCustomerId, counting()));
+
+        List<Long> customersWithMultipleOrder = mappedCount.entrySet().stream()
+                .filter(x -> x.getValue() > 1L)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+
+        assertTrue(customersWithMultipleOrder.size() > 0);
+
+        long count = allCustomerOrderStatistics.stream()
+                .filter(customerOrderStatistics ->
+                        Objects.equals(customerOrderStatistics.getCustomerId(), customersWithMultipleOrder.get(0)))
+                .map(CustomerOrderStatistics::getYear)
+                .distinct().count();
+
+        assertTrue(count > 1);
+    }
+
+
+
+
 }

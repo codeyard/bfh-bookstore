@@ -34,7 +34,7 @@ public class CustomBookRepositoryImpl implements CustomBookRepository {
             conjunction = criteriaBuilder.and(conjunction, criteriaBuilder.or(title, authors, publisher));
         }
 
-        criteriaQuery.where(conjunction);
+        criteriaQuery.select(book).where(conjunction);
         TypedQuery<Book> query = entityManager.createQuery(criteriaQuery);
         return query.getResultList();
     }
