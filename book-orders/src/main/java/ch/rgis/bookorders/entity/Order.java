@@ -44,11 +44,11 @@ public class Order {
      * The reason for this is that we are convinced that sorting here does not provide any benefit for the user.
      * Rather it could lead to confusion if the sorting might not reflect the users expected behavior.
      * A Set ensures that the added OrderItems are unique and duplicates are not possible.
-     * <p>
+     *
      * Cascade:
      * The Cascading was made because of the Composition defined in the uml diagram.
      * The Cascading type was set to all as it is important that the inverse entity is always up-to-date.
-     * <p>
+     *
      * OrphanRemoval:
      * If an order item is removed from the relationship, we want to cascade the remove operation to the order item.
      */
@@ -96,7 +96,6 @@ public class Order {
     }
 
     public void setOrderItems(Set<OrderItem> orderItems) {
-        //TODO Count quantity up;
         this.orderItems = orderItems;
     }
 

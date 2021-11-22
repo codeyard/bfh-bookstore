@@ -46,8 +46,8 @@ public class OrderItem {
 
 
     /**
-     * A OrderItem is compared on a book level!
-     * it cannot state the same book twice with different quantities
+     * An OrderItem is compared on a book level!
+     * It cannot hold the same book twice with different quantities
      */
     @Override
     public boolean equals(Object o) {

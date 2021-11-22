@@ -10,8 +10,8 @@ public interface CustomerOrderStatistics {
 
     Double getTotalAmount();
 
-    Integer getOrderItemsCount();
+    Integer getNumberOfBooks();
 
-    Double getAverageOrderValue();
+    Double getAverageBookPrice();
 
 }

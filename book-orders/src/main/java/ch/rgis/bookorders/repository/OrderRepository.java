@@ -31,8 +31,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                         o.customer_id as customerId,
                         concat(c.last_name, ' ',  c.first_name) as customerName,
                         sum(oi.book_price * oi.quantity) as totalAmount,
-                        count(oi) as orderItemsCount,
-                        avg(oi.book_price * oi.quantity) as averageOrderValue
+                        sum(oi.quantity) as numberOfBooks,
+                        sum(oi.book_price * oi.quantity)/sum(oi.quantity) as averageBookPrice
                     from book_order as o
                     left join order_item as oi on o.id = oi.order_id
                     inner join customer as c on o.customer_id = c.id

@@ -104,7 +104,6 @@ class OrderRepositoryTest {
         List<Customer> allCustomer = customerRepository.findAll();
 
         assertEquals(allCustomer.size(), allCustomerOrderStatistics.size() - 1);
-
     }
 
     @Test
@@ -115,8 +114,8 @@ class OrderRepositoryTest {
             .filter(customerOrderStatistics -> customerOrderStatistics.getCustomerId() == 10006L)
             .peek(customerOrderStatistics -> {
                 assertEquals("Cluney Angil", customerOrderStatistics.getCustomerName());
-                assertEquals(5, customerOrderStatistics.getOrderItemsCount());
-                assertEquals(341.408, customerOrderStatistics.getAverageOrderValue());
+                assertEquals(29, customerOrderStatistics.getNumberOfBooks());
+                assertEquals(58.86344827586207, customerOrderStatistics.getAverageBookPrice());
                 assertEquals(1707.04, customerOrderStatistics.getTotalAmount());
                 assertEquals(2021, customerOrderStatistics.getYear());
             })
