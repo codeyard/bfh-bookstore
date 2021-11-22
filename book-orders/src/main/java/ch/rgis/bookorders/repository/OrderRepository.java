@@ -15,7 +15,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Optional<Order> findById(Long id);
 
-    List<OrderInfoDTO> findAllByCustomerAndDateGreaterThanEqualAndDateLessThanEqual(Customer customer, LocalDateTime dateFrom, LocalDateTime dateTo);
+    List<OrderInfoDTO> findAllByCustomerAndDateBetween(Customer customer, LocalDateTime dateFrom, LocalDateTime dateTo);
 
     @Query("""
             select  new ch.rgis.bookorders.dto.OrderInfoDTO(o.id, o.date, o.amount, o.status)
@@ -26,10 +26,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<OrderInfoDTO> findOrdersByCustomerAndPeriod(Long customerId, LocalDateTime dateFrom, LocalDateTime dateTo);
 
     @Query(value = """
-                    select 
+                    select
                         extract(YEAR FROM o.order_date) as year,
                         o.customer_id as customerId,
-                        concat(c.last_name, ' ',  c.first_name) as customerName, 
+                        concat(c.last_name, ' ',  c.first_name) as customerName,
                         sum(oi.book_price * oi.quantity) as totalAmount,
                         count(oi) as orderItemsCount,
                         avg(oi.book_price * oi.quantity) as averageOrderValue

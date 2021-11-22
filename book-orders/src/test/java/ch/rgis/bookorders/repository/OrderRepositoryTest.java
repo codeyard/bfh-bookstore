@@ -44,13 +44,13 @@ class OrderRepositoryTest {
         assertEquals(5, order.get().getOrderItems().size());
 
         order.get().getOrderItems().stream()
-                .filter(orderItem -> orderItem.getBook().getTitle().equalsIgnoreCase("All Tomorrow's Parties"))
-                .peek(orderItem -> {
-                    Book book = orderItem.getBook();
-                    assertEquals("All Tomorrow's Parties", book.getTitle());
-                    assertEquals("Gerald Lannin", book.getAuthors());
-                    assertEquals("Fielding Ashdown", book.getPublisher());
-                });
+            .filter(orderItem -> orderItem.getBook().getTitle().equalsIgnoreCase("All Tomorrow's Parties"))
+            .peek(orderItem -> {
+                Book book = orderItem.getBook();
+                assertEquals("All Tomorrow's Parties", book.getTitle());
+                assertEquals("Gerald Lannin", book.getAuthors());
+                assertEquals("Fielding Ashdown", book.getPublisher());
+            });
     }
 
     @Test
@@ -66,13 +66,12 @@ class OrderRepositoryTest {
         Customer customer = customerRepository.getById(10000L);
         LocalDateTime dateTo = LocalDateTime.now();
         LocalDateTime dateFrom = LocalDateTime.of(
-                LocalDate.of(2021, 2, 2),
-                LocalTime.of(0, 0));
+            LocalDate.of(2021, 2, 2),
+            LocalTime.of(0, 0));
 
-        List<OrderInfoDTO> orders = orderRepository.findAllByCustomerAndDateGreaterThanEqualAndDateLessThanEqual(
-                customer, dateFrom, dateTo
+        List<OrderInfoDTO> orders = orderRepository.findAllByCustomerAndDateBetween(
+            customer, dateFrom, dateTo
         );
-        orders.forEach(order -> System.out.println("ORDER " + order.amount()));
 
         assertEquals(1, orders.size());
         assertEquals(new BigDecimal("1685.14"), orders.get(0).amount());
@@ -82,20 +81,22 @@ class OrderRepositoryTest {
     void findOrdersByCustomerAndPeriod_findOne() {
         LocalDateTime dateTo = LocalDateTime.now();
         LocalDateTime dateFrom = LocalDateTime.of(
-                LocalDate.of(2021, 2, 2),
-                LocalTime.of(0, 0));
+            LocalDate.of(2021, 2, 2),
+            LocalTime.of(0, 0));
 
         List<OrderInfoDTO> orders = orderRepository.findOrdersByCustomerAndPeriod(10000L, dateFrom, dateTo);
-        orders.forEach(order -> System.out.println(order.amount()));
 
         assertEquals(1, orders.size());
         assertEquals(new BigDecimal("1685.14"), orders.get(0).amount());
     }
 
+
     // Query 7: Get Order Statistics with total amount, number of positions and average order amount of all orders grouped by year and customer
 
     /**
-     * All Customers have an Order in Test Database; 1 Customer has multiple Orders
+     * All Customers have at least one Order in the Test Database
+     * 2 Customers have multiple Orders
+     * 1 Customer has two Orders in the same Year
      */
     @Test
     void testStatistics_foundAll() {
@@ -111,15 +112,15 @@ class OrderRepositoryTest {
         List<CustomerOrderStatistics> allCustomerOrderStatistics = orderRepository.getAllCustomerOrderStatistics();
 
         List<CustomerOrderStatistics> cluney_angil = allCustomerOrderStatistics.stream()
-                .filter(customerOrderStatistics -> customerOrderStatistics.getCustomerId() == 10006L)
-                .peek(customerOrderStatistics -> {
-                    assertEquals("Cluney Angil", customerOrderStatistics.getCustomerName());
-                    assertEquals(5, customerOrderStatistics.getOrderItemsCount());
-                    assertEquals(341.408, customerOrderStatistics.getAverageOrderValue());
-                    assertEquals(1707.04, customerOrderStatistics.getTotalAmount());
-                    assertEquals(2021, customerOrderStatistics.getYear());
-                })
-                .collect(Collectors.toList());
+            .filter(customerOrderStatistics -> customerOrderStatistics.getCustomerId() == 10006L)
+            .peek(customerOrderStatistics -> {
+                assertEquals("Cluney Angil", customerOrderStatistics.getCustomerName());
+                assertEquals(5, customerOrderStatistics.getOrderItemsCount());
+                assertEquals(341.408, customerOrderStatistics.getAverageOrderValue());
+                assertEquals(1707.04, customerOrderStatistics.getTotalAmount());
+                assertEquals(2021, customerOrderStatistics.getYear());
+            })
+            .collect(Collectors.toList());
 
         assertEquals(1, cluney_angil.size());
     }
@@ -127,24 +128,51 @@ class OrderRepositoryTest {
     @Test
     void testStatistics_foundCustomerWithMultipleOrdersInDifferentYears() {
         List<CustomerOrderStatistics> allCustomerOrderStatistics = orderRepository.getAllCustomerOrderStatistics();
-        Map<Long, Long> mappedCount = allCustomerOrderStatistics
-                .stream().collect(groupingBy(CustomerOrderStatistics::getCustomerId, counting()));
+        Map<Long, Long> ordersByCustomerInDifferentYears = allCustomerOrderStatistics
+            .stream().collect(groupingBy(CustomerOrderStatistics::getCustomerId, counting()));
 
-        List<Long> customersWithMultipleOrder = mappedCount.entrySet().stream()
-                .filter(x -> x.getValue() > 1L)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+        List<Long> customersWithMultipleOrdersInDifferentYears = ordersByCustomerInDifferentYears.entrySet().stream()
+            .filter(x -> x.getValue() > 1L)
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toList());
 
-        assertTrue(customersWithMultipleOrder.size() > 0);
+        assertTrue(customersWithMultipleOrdersInDifferentYears.size() > 0);
 
         long count = allCustomerOrderStatistics.stream()
-                .filter(customerOrderStatistics ->
-                        Objects.equals(customerOrderStatistics.getCustomerId(), customersWithMultipleOrder.get(0)))
-                .map(CustomerOrderStatistics::getYear)
-                .distinct().count();
+            .filter(customerOrderStatistics ->
+                Objects.equals(customerOrderStatistics.getCustomerId(), customersWithMultipleOrdersInDifferentYears.get(0)))
+            .map(CustomerOrderStatistics::getYear)
+            .distinct().count();
 
         assertTrue(count > 1);
     }
 
+    @Test
+    void testStatistics_foundCustomerWithMultipleOrdersInTheSameYear() {
+        List<CustomerOrderStatistics> allCustomerOrderStatistics = orderRepository.getAllCustomerOrderStatistics();
 
+        LocalDateTime dateFrom = LocalDateTime.of(
+            LocalDate.of(2021, 1, 1),
+            LocalTime.of(0, 0));
+
+        LocalDateTime dateTo = LocalDateTime.of(
+            LocalDate.of(2021, 12, 31),
+            LocalTime.of(23, 59));
+
+        List<OrderInfoDTO> ordersByCustomerAndPeriod = orderRepository.findOrdersByCustomerAndPeriod(10010L, dateFrom, dateTo);
+        assertEquals(2, ordersByCustomerAndPeriod.size());
+
+        Optional<CustomerOrderStatistics> aggregatedCustomerStatistics = allCustomerOrderStatistics.stream()
+            .filter(customerOrderStatistics -> customerOrderStatistics.getCustomerId() == 10010L)
+            .findFirst();
+        assertTrue(aggregatedCustomerStatistics.isPresent());
+        assertEquals(aggregatedCustomerStatistics.get().getTotalAmount(),
+            ordersByCustomerAndPeriod.stream().mapToDouble(num -> num.amount().doubleValue()).sum());
+
+        ordersByCustomerAndPeriod.forEach(orderInfo -> {
+            assertEquals(2021, orderInfo.date().getYear());
+        });
+
+        assertEquals(2021, aggregatedCustomerStatistics.get().getYear());
+    }
 }
