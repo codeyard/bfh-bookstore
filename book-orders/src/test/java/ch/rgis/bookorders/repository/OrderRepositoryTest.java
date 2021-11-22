@@ -14,9 +14,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
@@ -42,18 +44,18 @@ class OrderRepositoryTest {
         assertEquals(5, order.get().getOrderItems().size());
 
         order.get().getOrderItems().stream()
-            .filter(orderItem -> orderItem.getBook().getTitle().equalsIgnoreCase("All Tomorrow's Parties"))
-            .peek(orderItem -> {
-                Book book = orderItem.getBook();
-                assertEquals("All Tomorrow's Parties", book.getTitle());
-                assertEquals("Gerald Lannin", book.getAuthors());
-                assertEquals("Fielding Ashdown", book.getPublisher());
-            });
+                .filter(orderItem -> orderItem.getBook().getTitle().equalsIgnoreCase("All Tomorrow's Parties"))
+                .peek(orderItem -> {
+                    Book book = orderItem.getBook();
+                    assertEquals("All Tomorrow's Parties", book.getTitle());
+                    assertEquals("Gerald Lannin", book.getAuthors());
+                    assertEquals("Fielding Ashdown", book.getPublisher());
+                });
     }
 
     @Test
     void findById_findNone() {
-        Optional<Order> order = orderRepository.findById(100021L);
+        Optional<Order> order = orderRepository.findById(100023L);
         assertFalse(order.isPresent());
     }
 
@@ -68,7 +70,7 @@ class OrderRepositoryTest {
                 LocalTime.of(0, 0));
 
         List<OrderInfoDTO> orders = orderRepository.findAllByCustomerAndDateGreaterThanEqualAndDateLessThanEqual(
-            customer, dateFrom, dateTo
+                customer, dateFrom, dateTo
         );
         orders.forEach(order -> System.out.println("ORDER " + order.amount()));
 
@@ -91,15 +93,16 @@ class OrderRepositoryTest {
     }
 
     // Query 7: Get Order Statistics with total amount, number of positions and average order amount of all orders grouped by year and customer
+
     /**
-     * All Customers have an Order in Test Database
+     * All Customers have an Order in Test Database; 1 Customer has multiple Orders
      */
     @Test
     void testStatistics_foundAll() {
         List<CustomerOrderStatistics> allCustomerOrderStatistics = orderRepository.getAllCustomerOrderStatistics();
         List<Customer> allCustomer = customerRepository.findAll();
 
-        assertEquals(allCustomer.size(), allCustomerOrderStatistics.size());
+        assertEquals(allCustomer.size(), allCustomerOrderStatistics.size() - 1);
 
     }
 
@@ -142,8 +145,6 @@ class OrderRepositoryTest {
 
         assertTrue(count > 1);
     }
-
-
 
 
 }
