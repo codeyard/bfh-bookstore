@@ -17,7 +17,6 @@ public class Book {
     private String authors;
 
     private String publisher;
-
     private Integer publicationYear;
     private Integer numberOfPages;
     private String description;

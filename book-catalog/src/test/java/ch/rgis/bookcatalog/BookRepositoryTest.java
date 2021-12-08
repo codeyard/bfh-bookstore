@@ -49,4 +49,18 @@ public class BookRepositoryTest {
         List<Book> bookList = bookRepository.findBooksByKeywords("mining", "king", "bastei");
         assertEquals(0, bookList.size());
     }
+
+    @Test
+    void bookExists_FoundOne() {
+        boolean existsByIsbn = bookRepository.existsByIsbn("978-3-404-13089-4");
+        assertTrue(existsByIsbn);
+    }
+
+    @Test
+    void bookExists_FoundNone() {
+        boolean existsByIsbn = bookRepository.existsByIsbn("978-1-111-1111-4");
+        assertFalse(existsByIsbn);
+
+    }
+
 }
