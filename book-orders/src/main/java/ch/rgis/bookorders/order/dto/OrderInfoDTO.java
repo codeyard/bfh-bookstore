@@ -1,6 +1,6 @@
-package ch.rgis.bookorders.dto;
+package ch.rgis.bookorders.order.dto;
 
-import ch.rgis.bookorders.entity.OrderStatus;
+import ch.rgis.bookorders.order.entity.OrderStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

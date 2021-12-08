@@ -1,7 +1,7 @@
-package ch.rgis.bookorders.repository;
+package ch.rgis.bookorders.customer.repository;
 
-import ch.rgis.bookorders.dto.CustomerInfoDTO;
-import ch.rgis.bookorders.entity.Customer;
+import ch.rgis.bookorders.customer.dto.CustomerInfoDTO;
+import ch.rgis.bookorders.customer.entity.Customer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

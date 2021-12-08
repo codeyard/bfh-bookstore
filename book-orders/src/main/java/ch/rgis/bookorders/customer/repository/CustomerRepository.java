@@ -1,7 +1,7 @@
-package ch.rgis.bookorders.repository;
+package ch.rgis.bookorders.customer.repository;
 
-import ch.rgis.bookorders.dto.CustomerInfoDTO;
-import ch.rgis.bookorders.entity.Customer;
+import ch.rgis.bookorders.customer.dto.CustomerInfoDTO;
+import ch.rgis.bookorders.customer.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -13,7 +13,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     Optional<Customer> findByEmail(String email);
 
     @Query("""
-        select  new ch.rgis.bookorders.dto.CustomerInfoDTO(c.id, c.firstName, c.lastName, c.email)
+        select  new ch.rgis.bookorders.customer.dto.CustomerInfoDTO(c.id, c.firstName, c.lastName, c.email)
         from    Customer c
         where   upper(c.firstName) like upper(concat('%', :name, '%'))
                 or upper(c.lastName) like upper(concat('%', :name, '%'))

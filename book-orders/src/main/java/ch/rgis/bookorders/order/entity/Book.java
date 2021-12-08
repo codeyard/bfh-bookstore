@@ -1,4 +1,4 @@
-package ch.rgis.bookorders.entity;
+package ch.rgis.bookorders.order.entity;
 
 import javax.persistence.Embeddable;
 import java.math.BigDecimal;

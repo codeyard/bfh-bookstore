@@ -1,4 +1,7 @@
-package ch.rgis.bookorders.entity;
+package ch.rgis.bookorders.order.entity;
+
+import ch.rgis.bookorders.customer.entity.Address;
+import ch.rgis.bookorders.customer.entity.Customer;
 
 import javax.persistence.*;
 import java.math.BigDecimal;

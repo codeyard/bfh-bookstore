@@ -1,4 +1,4 @@
-package ch.rgis.bookorders.dto;
+package ch.rgis.bookorders.order.dto;
 
 public interface CustomerOrderStatistics {
 

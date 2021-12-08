@@ -1,4 +1,4 @@
-package ch.rgis.bookorders.entity;
+package ch.rgis.bookorders.order.entity;
 
 public enum OrderStatus {
     ACCEPTED, PROCESSING, SHIPPED, CANCELLED

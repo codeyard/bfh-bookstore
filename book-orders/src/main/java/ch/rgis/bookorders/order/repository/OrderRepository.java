@@ -1,9 +1,9 @@
-package ch.rgis.bookorders.repository;
+package ch.rgis.bookorders.order.repository;
 
-import ch.rgis.bookorders.dto.CustomerOrderStatistics;
-import ch.rgis.bookorders.dto.OrderInfoDTO;
-import ch.rgis.bookorders.entity.Customer;
-import ch.rgis.bookorders.entity.Order;
+import ch.rgis.bookorders.order.dto.CustomerOrderStatistics;
+import ch.rgis.bookorders.order.dto.OrderInfoDTO;
+import ch.rgis.bookorders.customer.entity.Customer;
+import ch.rgis.bookorders.order.entity.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -18,7 +18,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<OrderInfoDTO> findAllByCustomerAndDateBetween(Customer customer, LocalDateTime dateFrom, LocalDateTime dateTo);
 
     @Query("""
-            select  new ch.rgis.bookorders.dto.OrderInfoDTO(o.id, o.date, o.amount, o.status)
+            select  new ch.rgis.bookorders.order.dto.OrderInfoDTO(o.id, o.date, o.amount, o.status)
             from    Order o
             where   o.customer.id = :customerId
             and     o.date between :dateFrom and :dateTo
