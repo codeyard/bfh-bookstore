@@ -12,6 +12,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     Optional<Customer> findByEmail(String email);
 
+    // TODO existsById...()
+
     @Query("""
         select  new ch.rgis.bookorders.customer.dto.CustomerInfoDTO(c.id, c.firstName, c.lastName, c.email)
         from    Customer c

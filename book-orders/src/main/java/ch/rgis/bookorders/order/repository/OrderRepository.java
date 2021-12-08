@@ -1,7 +1,7 @@
 package ch.rgis.bookorders.order.repository;
 
 import ch.rgis.bookorders.order.dto.CustomerOrderStatistics;
-import ch.rgis.bookorders.order.dto.OrderInfoDTO;
+import ch.rgis.bookorders.order.dto.OrderInfo;
 import ch.rgis.bookorders.customer.entity.Customer;
 import ch.rgis.bookorders.order.entity.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +15,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Optional<Order> findById(Long id);
 
-    List<OrderInfoDTO> findAllByCustomerAndDateBetween(Customer customer, LocalDateTime dateFrom, LocalDateTime dateTo);
+    List<OrderInfo> findAllByCustomerAndDateBetween(Customer customer, LocalDateTime dateFrom, LocalDateTime dateTo);
 
     @Query("""
             select  new ch.rgis.bookorders.order.dto.OrderInfoDTO(o.id, o.date, o.amount, o.status)
@@ -23,7 +23,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             where   o.customer.id = :customerId
             and     o.date between :dateFrom and :dateTo
             """)
-    List<OrderInfoDTO> findOrdersByCustomerAndPeriod(Long customerId, LocalDateTime dateFrom, LocalDateTime dateTo);
+    List<OrderInfo> findOrdersByCustomerAndPeriod(Long customerId, LocalDateTime dateFrom, LocalDateTime dateTo);
 
     @Query(value = """
                     select

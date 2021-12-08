@@ -2,11 +2,10 @@ package ch.rgis.bookorders.order.repository;
 
 import ch.rgis.bookorders.customer.repository.CustomerRepository;
 import ch.rgis.bookorders.order.dto.CustomerOrderStatistics;
-import ch.rgis.bookorders.order.dto.OrderInfoDTO;
+import ch.rgis.bookorders.order.dto.OrderInfo;
 import ch.rgis.bookorders.order.entity.Book;
 import ch.rgis.bookorders.customer.entity.Customer;
 import ch.rgis.bookorders.order.entity.Order;
-import ch.rgis.bookorders.order.repository.OrderRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -71,7 +70,7 @@ class OrderRepositoryTest {
             LocalDate.of(2021, 2, 2),
             LocalTime.of(0, 0));
 
-        List<OrderInfoDTO> orders = orderRepository.findAllByCustomerAndDateBetween(
+        List<OrderInfo> orders = orderRepository.findAllByCustomerAndDateBetween(
             customer, dateFrom, dateTo
         );
 
@@ -86,7 +85,7 @@ class OrderRepositoryTest {
             LocalDate.of(2021, 2, 2),
             LocalTime.of(0, 0));
 
-        List<OrderInfoDTO> orders = orderRepository.findOrdersByCustomerAndPeriod(10000L, dateFrom, dateTo);
+        List<OrderInfo> orders = orderRepository.findOrdersByCustomerAndPeriod(10000L, dateFrom, dateTo);
 
         assertEquals(1, orders.size());
         assertEquals(new BigDecimal("1685.14"), orders.get(0).amount());
@@ -160,7 +159,7 @@ class OrderRepositoryTest {
             LocalDate.of(2021, 12, 31),
             LocalTime.of(23, 59));
 
-        List<OrderInfoDTO> ordersByCustomerAndPeriod = orderRepository.findOrdersByCustomerAndPeriod(10010L, dateFrom, dateTo);
+        List<OrderInfo> ordersByCustomerAndPeriod = orderRepository.findOrdersByCustomerAndPeriod(10010L, dateFrom, dateTo);
         assertEquals(2, ordersByCustomerAndPeriod.size());
 
         Optional<CustomerOrderStatistics> aggregatedCustomerStatistics = allCustomerOrderStatistics.stream()
