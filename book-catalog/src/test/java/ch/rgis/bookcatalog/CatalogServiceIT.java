@@ -69,9 +69,9 @@ public class CatalogServiceIT {
     }
 
     @Test
-    // TODO: Test fails with BookAlreadyExistsException
     void addBook_bookAdded() throws BookAlreadyExistsException, BookNotFoundException {
         Book book = createBook();
+        book.setIsbn("978-3-404-13000-9");
         catalogService.addBook(book);
         Book savedBook = catalogService.findBook(book.getIsbn());
         Assertions.assertEquals("The Mining", savedBook.getTitle());
@@ -80,8 +80,10 @@ public class CatalogServiceIT {
     @Test
     void addBook_throwsBookAlreadyExistsException() throws BookAlreadyExistsException {
         Book book = createBook();
+        book.setIsbn("978-3-404-13000-1");
         catalogService.addBook(book);
         Book book2 = createBook();
+        book2.setIsbn("978-3-404-13000-1");
         assertThrows(BookAlreadyExistsException.class, () -> catalogService.addBook(book2));
     }
 
@@ -96,10 +98,9 @@ public class CatalogServiceIT {
 
     private Book createBook() {
         Book book = new Book();
-        book.setIsbn("978-3-404-13000-1");
         book.setTitle("The Mining");
         book.setSubtitle("How to get the Wäutherschaft");
-        book.setAuthors("Raphael Gerber, Igor Stojanoic");
+        book.setAuthors("Raphael Gerber, Igor Stojanovic");
         book.setDescription("The most amazing book ever");
         book.setPrice(new BigDecimal("222.2"));
         book.setPublisher("Anonymous");
