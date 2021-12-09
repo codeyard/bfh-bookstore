@@ -15,7 +15,7 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "book_order_seq")
-    @SequenceGenerator(name = "book_order_seq", sequenceName = "book_order_seq", initialValue = 100_000, allocationSize = 50)
+    @SequenceGenerator(name = "book_order_seq", sequenceName = "book_order_seq")
     private Long id;
 
     @Column(name = "order_date")
@@ -55,7 +55,7 @@ public class Order {
      * OrphanRemoval:
      * If an order item is removed from the relationship, we want to cascade the remove operation to the order item.
      */
-    // TODO: Change to List<OrderItem> items ???
+    // TODO: Change to List<OrderItem> items (as according to API documentation) ???
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id", nullable = false)
     private Set<OrderItem> orderItems = new HashSet<>();

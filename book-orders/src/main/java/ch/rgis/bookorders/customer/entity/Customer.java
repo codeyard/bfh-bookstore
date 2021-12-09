@@ -7,7 +7,7 @@ public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customer_seq")
-    @SequenceGenerator(name = "customer_seq", sequenceName = "customer_seq", initialValue = 10000, allocationSize = 50)
+    @SequenceGenerator(name = "customer_seq", sequenceName = "customer_seq")
     private Long id;
 
     private String firstName;
@@ -16,7 +16,7 @@ public class Customer {
 
     private String email;
 
-    // @Column(unique = true)
+    @Column(unique = true)
     private String username;
 
     @Embedded()

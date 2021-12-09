@@ -8,7 +8,7 @@ public class OrderItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "order_item_seq")
-    @SequenceGenerator(name = "order_item_seq", sequenceName = "order_item_seq", initialValue = 1000, allocationSize = 50)
+    @SequenceGenerator(name = "order_item_seq", sequenceName = "order_item_seq")
     private Long id;
 
     private Integer quantity;

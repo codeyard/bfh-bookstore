@@ -14,8 +14,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertThrows;
-
 @SpringBootTest
 public class CatalogServiceIT {
 
@@ -41,7 +39,7 @@ public class CatalogServiceIT {
         Optional<Book> bookByIsbn = bookRepository.findBookByIsbn("978-3-404-13089-4");
         if (bookByIsbn.isPresent()) {
             bookByIsbn.get().setIsbn("978-3-404-1111-4");
-            assertThrows(BookNotFoundException.class, () -> catalogService.updateBook(bookByIsbn.get()));
+            Assertions.assertThrows(BookNotFoundException.class, () -> catalogService.updateBook(bookByIsbn.get()));
         }
     }
 
@@ -65,7 +63,7 @@ public class CatalogServiceIT {
 
     @Test
     void findBook_throwsBookNotFoundException() {
-        assertThrows(BookNotFoundException.class, () -> catalogService.findBook("978-3-404-13089-1"));
+        Assertions.assertThrows(BookNotFoundException.class, () -> catalogService.findBook("978-3-404-13089-1"));
     }
 
     @Test
@@ -84,7 +82,7 @@ public class CatalogServiceIT {
         catalogService.addBook(book);
         Book book2 = createBook();
         book2.setIsbn("978-3-404-13000-1");
-        assertThrows(BookAlreadyExistsException.class, () -> catalogService.addBook(book2));
+        Assertions.assertThrows(BookAlreadyExistsException.class, () -> catalogService.addBook(book2));
     }
 
 
@@ -92,7 +90,7 @@ public class CatalogServiceIT {
     void addBook_throwsBookAlreadyExistsExceptionBecauseOfDuplicatedISBN() {
         Book book = createBook();
         book.setIsbn("978-3-404-13089-4");
-        assertThrows(BookAlreadyExistsException.class, () -> catalogService.addBook(book));
+        Assertions.assertThrows(BookAlreadyExistsException.class, () -> catalogService.addBook(book));
     }
 
 

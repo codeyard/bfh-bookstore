@@ -4,6 +4,7 @@ import ch.rgis.bookorders.customer.entity.Customer;
 import ch.rgis.bookorders.customer.exception.CustomerNotFoundException;
 import ch.rgis.bookorders.customer.exception.UsernameAlreadyExistsException;
 import ch.rgis.bookorders.customer.repository.CustomerRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -30,10 +31,9 @@ public class CustomerService {
      * @throws UsernameAlreadyExistsException - if the username already exists
      */
     public Customer registerCustomer(Customer customer) throws UsernameAlreadyExistsException {
-        Optional<Customer> customerOptional = customerRepository.findById(customer.getId());
-        if (!customerOptional.isPresent()) {
+        try {
             return customerRepository.saveAndFlush(customer);
-        } else {
+        } catch (DataIntegrityViolationException e) {
             throw new UsernameAlreadyExistsException();
         }
     }
@@ -59,19 +59,11 @@ public class CustomerService {
      * @throws UsernameAlreadyExistsException - if the username is to be changed and the new username already exists
      */
     public Customer updateCustomer(Customer customer) throws CustomerNotFoundException, UsernameAlreadyExistsException {
-        Optional<Customer> customerOptional = customerRepository.findById(customer.getId());
-        if (customerOptional.isEmpty()) {
-            throw new CustomerNotFoundException();
-        } else {
-            try {
-                Customer updatingCustomer = customerOptional.get();
-                // TODO: Why overwrite username?
-                updatingCustomer.setUsername(customer.getUsername());
-                return customerRepository.saveAndFlush(updatingCustomer);
-            } catch (Exception e) {
-                System.out.println(e);
-                throw new UsernameAlreadyExistsException();
-            }
+        findCustomer(customer.getId());
+        try {
+            return customerRepository.saveAndFlush(customer);
+        } catch (DataIntegrityViolationException e) {
+            throw new UsernameAlreadyExistsException();
         }
     }
 }

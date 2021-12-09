@@ -9,7 +9,7 @@ public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "payment_seq")
-    @SequenceGenerator(name = "payment_seq", sequenceName = "payment_seq", initialValue = 1000, allocationSize = 50)
+    @SequenceGenerator(name = "payment_seq", sequenceName = "payment_seq")
     private Long id;
 
     @Column(name = "payment_date")
@@ -19,7 +19,7 @@ public class Payment {
     private String creditCardNumber;
     private String transactionId;
 
-    // TODO Add Order entity
+    // TODO Add Order entity? (as according to API documentation)
 
     // <editor-fold desc="Getter and Setter">
 
