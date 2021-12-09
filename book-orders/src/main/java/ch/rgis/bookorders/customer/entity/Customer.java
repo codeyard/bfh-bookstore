@@ -16,6 +16,7 @@ public class Customer {
 
     private String email;
 
+//    @Column(unique = true)
     private String username;
 
     @Embedded()

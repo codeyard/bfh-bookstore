@@ -7,9 +7,11 @@ import ch.rgis.bookorders.order.entity.OrderItem;
 import ch.rgis.bookorders.order.exception.OrderAlreadyShippedException;
 import ch.rgis.bookorders.order.exception.OrderNotFoundException;
 import ch.rgis.bookorders.order.exception.PaymentFailedException;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class OrderService {
 
     public Order placeOrder(long customerId, List<OrderItem> items) throws CustomerNotFoundException, PaymentFailedException {

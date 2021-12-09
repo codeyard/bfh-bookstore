@@ -18,7 +18,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<OrderInfo> findAllByCustomerAndDateBetween(Customer customer, LocalDateTime dateFrom, LocalDateTime dateTo);
 
     @Query("""
-            select  new ch.rgis.bookorders.order.dto.OrderInfoDTO(o.id, o.date, o.amount, o.status)
+            select  new ch.rgis.bookorders.order.dto.OrderInfo(o.id, o.date, o.amount, o.status)
             from    Order o
             where   o.customer.id = :customerId
             and     o.date between :dateFrom and :dateTo
