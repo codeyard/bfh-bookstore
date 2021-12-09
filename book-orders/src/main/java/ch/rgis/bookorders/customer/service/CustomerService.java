@@ -7,8 +7,6 @@ import ch.rgis.bookorders.customer.repository.CustomerRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 /**
  * The interface CustomerService defines a service to manage the customers of a bookstore.
  *

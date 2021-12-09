@@ -1,10 +1,10 @@
 package ch.rgis.bookorders.order.repository;
 
+import ch.rgis.bookorders.customer.entity.Customer;
 import ch.rgis.bookorders.customer.repository.CustomerRepository;
 import ch.rgis.bookorders.order.dto.CustomerOrderStatistics;
 import ch.rgis.bookorders.order.dto.OrderInfo;
 import ch.rgis.bookorders.order.entity.Book;
-import ch.rgis.bookorders.customer.entity.Customer;
 import ch.rgis.bookorders.order.entity.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
