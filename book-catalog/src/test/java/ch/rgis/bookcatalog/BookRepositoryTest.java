@@ -60,7 +60,5 @@ public class BookRepositoryTest {
     void bookExists_FoundNone() {
         boolean existsByIsbn = bookRepository.existsByIsbn("978-1-111-1111-4");
         assertFalse(existsByIsbn);
-
     }
-
 }

@@ -21,10 +21,6 @@ public class Payment {
 
     // TODO Add Order entity
 
-
-    public Payment() {
-    }
-
     // <editor-fold desc="Getter and Setter">
 
     public Long getId() {

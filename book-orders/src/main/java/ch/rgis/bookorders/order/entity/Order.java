@@ -61,10 +61,6 @@ public class Order {
     private Set<OrderItem> orderItems = new HashSet<>();
 
 
-    public Order() {
-    }
-
-
     // <editor-fold desc="Getter and Setter">
 
     public Long getId() {

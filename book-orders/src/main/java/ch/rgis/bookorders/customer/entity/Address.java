@@ -16,10 +16,6 @@ public class Address {
     private String country;
 
 
-    public Address() {
-    }
-
-
     //<editor-fold desc="Getter and Setter">
     public String getStreet() {
         return street;
