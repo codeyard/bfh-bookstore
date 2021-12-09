@@ -25,6 +25,10 @@ public class Book {
     private BigDecimal price;
 
 
+    public Book() {
+    }
+
+
     // <editor-fold desc="Getter and Setter">
 
     public String getIsbn() {

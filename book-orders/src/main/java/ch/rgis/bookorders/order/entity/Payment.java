@@ -19,6 +19,11 @@ public class Payment {
     private String creditCardNumber;
     private String transactionId;
 
+    // TODO Add Order entity
+
+
+    public Payment() {
+    }
 
     // <editor-fold desc="Getter and Setter">
 

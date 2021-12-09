@@ -16,6 +16,11 @@ public class CreditCard {
 
     private Integer expirationYear;
 
+
+    public CreditCard() {
+    }
+
+
     //<editor-fold desc="Getter and Setter">
     public CreditCardType getType() {
         return type;

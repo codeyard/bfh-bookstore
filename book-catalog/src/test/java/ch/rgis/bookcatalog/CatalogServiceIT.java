@@ -69,6 +69,7 @@ public class CatalogServiceIT {
     }
 
     @Test
+    // TODO: Test fails with BookAlreadyExistsException
     void addBook_bookAdded() throws BookAlreadyExistsException, BookNotFoundException {
         Book book = createBook();
         catalogService.addBook(book);

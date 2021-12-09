@@ -5,7 +5,7 @@ import ch.rgis.bookorders.customer.entity.CreditCard;
 import ch.rgis.bookorders.customer.entity.CreditCardType;
 import ch.rgis.bookorders.customer.entity.Customer;
 import ch.rgis.bookorders.customer.service.CustomerService;
-import ch.rgis.bookorders.order.exception.CustomerNotFoundException;
+import ch.rgis.bookorders.customer.exception.CustomerNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +28,7 @@ public class CustomerServiceIT {
 
     private Customer createCustomer() {
         Customer customer = new Customer();
+        customer.setId(10021L);
         customer.setUsername("billGates");
         customer.setEmail("bill@gates.com");
         customer.setFirstName("Bill");

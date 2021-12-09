@@ -16,6 +16,11 @@ public class OrderItem {
     @Embedded
     private Book book;
 
+
+    public OrderItem() {
+    }
+
+
     // <editor-fold desc="Getter and Setter">
 
     public Long getId() {

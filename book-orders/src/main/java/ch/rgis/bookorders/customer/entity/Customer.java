@@ -16,7 +16,7 @@ public class Customer {
 
     private String email;
 
-//    @Column(unique = true)
+    // @Column(unique = true)
     private String username;
 
     @Embedded()
@@ -24,6 +24,10 @@ public class Customer {
 
     @Embedded()
     private CreditCard creditCard;
+
+
+    public Customer() {
+    }
 
 
     // <editor-fold desc="Getter and Setter">
