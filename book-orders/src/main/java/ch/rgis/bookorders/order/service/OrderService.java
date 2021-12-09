@@ -135,6 +135,13 @@ public class OrderService {
      * @throws OrderAlreadyShippedException - if the order has already been shipped
      */
     public void cancelOrder(long id) throws OrderNotFoundException, OrderAlreadyShippedException {
+        Order order = orderRepository.findById(id).orElseThrow(OrderNotFoundException::new);
 
+        if (order.getStatus().equals(OrderStatus.SHIPPED)) {
+            throw new OrderAlreadyShippedException();
+        }
+
+        order.setStatus(OrderStatus.CANCELLED);
+        orderRepository.saveAndFlush(order);
     }
 }
