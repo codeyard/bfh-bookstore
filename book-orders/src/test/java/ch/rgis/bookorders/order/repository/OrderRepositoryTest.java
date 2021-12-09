@@ -42,9 +42,9 @@ class OrderRepositoryTest {
     void findById_findOne() {
         Optional<Order> order = orderRepository.findById(100000L);
         assertTrue(order.isPresent());
-        assertEquals(5, order.get().getOrderItems().size());
+        assertEquals(5, order.get().getItems().size());
 
-        order.get().getOrderItems().stream()
+        order.get().getItems().stream()
             .filter(orderItem -> orderItem.getBook().getTitle().equalsIgnoreCase("All Tomorrow's Parties"))
             .peek(orderItem -> {
                 Book book = orderItem.getBook();

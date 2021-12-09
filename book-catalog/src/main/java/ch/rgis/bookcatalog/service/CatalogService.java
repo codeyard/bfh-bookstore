@@ -49,8 +49,7 @@ public class CatalogService {
      * @throws BookNotFoundException - if no book with the specified ISBN exists
      */
     public Book findBook(String isbn) throws BookNotFoundException {
-        Optional<Book> bookByIsbn = bookRepository.findBookByIsbn(isbn);
-        return bookByIsbn.orElseThrow(BookNotFoundException::new);
+        return bookRepository.findBookByIsbn(isbn).orElseThrow(BookNotFoundException::new);
     }
 
     /**

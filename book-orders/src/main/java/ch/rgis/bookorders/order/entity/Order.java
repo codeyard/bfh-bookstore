@@ -6,7 +6,8 @@ import ch.rgis.bookorders.customer.entity.Customer;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -42,11 +43,8 @@ public class Order {
     private Customer customer;
 
     /**
-     * Set:
-     * We chose to have a set!
-     * The reason for this is that we are convinced that sorting here does not provide any benefit for the user.
-     * Rather it could lead to confusion if the sorting might not reflect the users expected behavior.
-     * A Set ensures that the added OrderItems are unique and duplicates are not possible.
+     * List:
+     * Used to be a set. List was suggested according to the API documentation provided!
      * <p>
      * Cascade:
      * The Cascading was made because of the Composition defined in the uml diagram.
@@ -55,10 +53,9 @@ public class Order {
      * OrphanRemoval:
      * If an order item is removed from the relationship, we want to cascade the remove operation to the order item.
      */
-    // TODO: Change to List<OrderItem> items (as according to API documentation) ???
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id", nullable = false)
-    private Set<OrderItem> orderItems = new HashSet<>();
+    private List<OrderItem> items = new ArrayList<>();
 
 
     // <editor-fold desc="Getter and Setter">
@@ -95,12 +92,12 @@ public class Order {
         this.status = status;
     }
 
-    public Set<OrderItem> getOrderItems() {
-        return orderItems;
+    public List<OrderItem> getItems() {
+        return items;
     }
 
-    public void setOrderItems(Set<OrderItem> orderItems) {
-        this.orderItems = orderItems;
+    public void setItems(List<OrderItem> items) {
+        this.items = items;
     }
 
     public Address getAddress() {
