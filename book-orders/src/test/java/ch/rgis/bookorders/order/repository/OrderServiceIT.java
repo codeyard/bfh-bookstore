@@ -3,6 +3,7 @@ package ch.rgis.bookorders.order.repository;
 import ch.rgis.bookorders.customer.entity.Customer;
 import ch.rgis.bookorders.customer.exception.CustomerNotFoundException;
 import ch.rgis.bookorders.customer.repository.CustomerRepository;
+import ch.rgis.bookorders.order.dto.OrderInfo;
 import ch.rgis.bookorders.order.entity.Book;
 import ch.rgis.bookorders.order.entity.Order;
 import ch.rgis.bookorders.order.entity.OrderItem;
@@ -10,6 +11,7 @@ import ch.rgis.bookorders.order.entity.OrderStatus;
 import ch.rgis.bookorders.order.exception.OrderNotFoundException;
 import ch.rgis.bookorders.order.exception.PaymentFailedException;
 import ch.rgis.bookorders.order.service.OrderService;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.*;
 
 @SpringBootTest
 public class OrderServiceIT {
@@ -159,6 +160,23 @@ public class OrderServiceIT {
     void findOrder_throwsOrderNotFoundException() {
         assertThrows(OrderNotFoundException.class, () -> orderService.findOrder(300000L));
     }
+
+    @Test
+    void searchOrders_successful() throws CustomerNotFoundException {
+        List<OrderInfo> orderInfos = orderService.searchOrders(10010L, 2021);
+        Assertions.assertEquals(2, orderInfos.size());
+        orderInfos.forEach(orderInfo -> {
+            Assertions.assertEquals(2021, orderInfo.date().getYear());
+            Assertions.assertNotNull(orderInfo.amount());
+        });
+    }
+
+    @Test
+    void searchOrders_throwsCustomerNotFoundException() {
+        assertThrows(CustomerNotFoundException.class, () -> orderService.searchOrders(30000L, 2021));
+    }
+
+
 
 
 
