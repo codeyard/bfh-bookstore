@@ -8,6 +8,7 @@ import ch.rgis.bookorders.order.entity.Book;
 import ch.rgis.bookorders.order.entity.Order;
 import ch.rgis.bookorders.order.entity.OrderItem;
 import ch.rgis.bookorders.order.entity.OrderStatus;
+import ch.rgis.bookorders.order.exception.OrderAlreadyShippedException;
 import ch.rgis.bookorders.order.exception.OrderNotFoundException;
 import ch.rgis.bookorders.order.exception.PaymentFailedException;
 import ch.rgis.bookorders.order.service.OrderService;
@@ -177,8 +178,25 @@ public class OrderServiceIT {
     }
 
 
+    @Test
+    void cancelOrder_successful() throws OrderNotFoundException, OrderAlreadyShippedException {
+        long id = 100022L;
 
+        orderService.cancelOrder(id);
+        Optional<Order> movifiedlOrder = orderRepository.findById(id);
+        Assertions.assertTrue(movifiedlOrder.isPresent());
+        Assertions.assertEquals(OrderStatus.CANCELLED, movifiedlOrder.get().getStatus());
+    }
 
+    @Test
+    void cancelOrder_throwsOrderNotFoundException() {
+        assertThrows(OrderNotFoundException.class, () -> orderService.cancelOrder(30000L));
+    }
+
+    @Test
+    void cancelOrder_throwsOrderAlreadyShippedExceiption() {
+        assertThrows(OrderAlreadyShippedException.class, () -> orderService.cancelOrder(100016L));
+    }
 
 
     private List<OrderItem> createOrderItems(boolean failingAmount) {
