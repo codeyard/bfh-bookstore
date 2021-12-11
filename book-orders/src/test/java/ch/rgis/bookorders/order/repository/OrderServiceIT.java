@@ -7,6 +7,7 @@ import ch.rgis.bookorders.order.entity.Book;
 import ch.rgis.bookorders.order.entity.Order;
 import ch.rgis.bookorders.order.entity.OrderItem;
 import ch.rgis.bookorders.order.entity.OrderStatus;
+import ch.rgis.bookorders.order.exception.OrderNotFoundException;
 import ch.rgis.bookorders.order.exception.PaymentFailedException;
 import ch.rgis.bookorders.order.service.OrderService;
 import org.junit.jupiter.api.Assertions;
@@ -19,11 +20,13 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 @SpringBootTest
@@ -107,7 +110,7 @@ public class OrderServiceIT {
 
         Optional<Customer> optionalCustomer = customerRepository.findById(10020L);
         Assertions.assertTrue(optionalCustomer.isPresent());
-        optionalCustomer.get().getCreditCard().setExpirationYear(LocalDateTime.now().getYear()-1);
+        optionalCustomer.get().getCreditCard().setExpirationYear(LocalDateTime.now().getYear() - 1);
         customerRepository.saveAndFlush(optionalCustomer.get());
 
         assertThrows(PaymentFailedException.class, () -> orderService.placeOrder(optionalCustomer.get().getId(), items));
@@ -128,18 +131,39 @@ public class OrderServiceIT {
 
     @Test
     @Transactional
-    void placeOrder_throwsCustomerNotFoundExceptin() {
+    void placeOrder_throwsCustomerNotFoundException() {
         List<OrderItem> items = createOrderItems(false);
 
         assertThrows(CustomerNotFoundException.class, () -> orderService.placeOrder(100030L, items));
     }
 
 
+    @Test
+    void findOrder_successful() throws OrderNotFoundException {
+        Order order = orderService.findOrder(100000L);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+        Assertions.assertEquals(LocalDateTime.parse("2021-02-03 14:17:00.000000", formatter), order.getDate());
+        Assertions.assertEquals(5, order.getItems().size());
+        Assertions.assertEquals(OrderStatus.PROCESSING, order.getStatus());
+        Assertions.assertEquals("cscoular0@tinyurl.com", order.getCustomer().getEmail());
+        Assertions.assertEquals("5100137730185616", order.getCustomer().getCreditCard().getNumber());
+        Assertions.assertEquals("Bern", order.getCustomer().getAddress().getCity());
+        Assertions.assertEquals(order.getAmount(), order.getItems().stream()
+                .map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
+
+
+    }
+
+    @Test
+    void findOrder_throwsOrderNotFoundException() {
+        assertThrows(OrderNotFoundException.class, () -> orderService.findOrder(300000L));
+    }
+
 
 
 
     private List<OrderItem> createOrderItems(boolean failingAmount) {
-
         OrderItem orderItem1 = new OrderItem();
 
         orderItem1.setQuantity(3);
