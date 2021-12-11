@@ -60,7 +60,6 @@ public class OrderService {
         BigDecimal totalAmount = items.stream().
             map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
             .reduce(BigDecimal.ZERO, BigDecimal::add);
-        System.out.println("Total Amount: " + totalAmount);
         if (totalAmount.compareTo(maxAmount) > 0) {
             throw new PaymentFailedException();
         }
@@ -69,12 +68,12 @@ public class OrderService {
         CreditCard creditCard = customer.getCreditCard();
         LocalDate initial = LocalDate.of(creditCard.getExpirationYear(), creditCard.getExpirationMonth(), 1);
         LocalDate expirationDate = initial.with(lastDayOfMonth());
-        if (expirationDate.isAfter(LocalDate.now())) {
+        if (expirationDate.isBefore(LocalDate.now())) {
             throw new PaymentFailedException();
         }
 
         // Case 3: Credit card number invalid
-        String regex = "(^[0-9]{16}$)";
+        String regex = "(r'^[0-9]{12}$|^[0-9]{14}$|^[0-9]{16}$)"; // TODO: CHECK FOR REGEX
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(creditCard.getNumber().replaceAll("-", ""));
         if (!matcher.matches()) {

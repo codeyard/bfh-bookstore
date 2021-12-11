@@ -1,6 +1,7 @@
 package ch.rgis.bookorders.customer.entity;
 
 import javax.persistence.Embeddable;
+import java.util.Objects;
 
 @Embeddable
 public class Address {
@@ -57,4 +58,15 @@ public class Address {
         this.country = country;
     }
     //</editor-fold>
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Address address = (Address) o;
+        return street.equals(address.street) && stateProvince.equals(address.stateProvince) && postalCode.equals(address.postalCode) && city.equals(address.city) && country.equals(address.country);
+    }
+
+
 }

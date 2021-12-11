@@ -84,6 +84,7 @@ public class Customer {
         this.creditCard = creditCard;
     }
 
-
     // </editor-fold>
+
+
 }
