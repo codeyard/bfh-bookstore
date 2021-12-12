@@ -12,7 +12,6 @@ import ch.rgis.bookorders.order.exception.OrderAlreadyShippedException;
 import ch.rgis.bookorders.order.exception.OrderNotFoundException;
 import ch.rgis.bookorders.order.exception.PaymentFailedException;
 import ch.rgis.bookorders.order.service.OrderService;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThrows;
 
 @SpringBootTest
 public class OrderServiceIT {
@@ -50,10 +49,10 @@ public class OrderServiceIT {
     void placeOrder_successful() throws CustomerNotFoundException, PaymentFailedException {
         List<OrderItem> items = createOrderItems(false);
         Assertions.assertTrue(
-                items.stream()
-                        .map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-                        .reduce(BigDecimal.ZERO, BigDecimal::add)
-                        .compareTo(maxAmount) < 0);
+            items.stream()
+                .map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .compareTo(maxAmount) < 0);
 
 
         Optional<Customer> optionalCustomer = customerRepository.findById(10020L);
@@ -72,17 +71,17 @@ public class OrderServiceIT {
         Assertions.assertEquals(2, savedOrder.getItems().size());
 
         Assertions.assertEquals(0, items.stream()
-                .map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .compareTo(savedOrder.getAmount()));
+            .map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+            .reduce(BigDecimal.ZERO, BigDecimal::add)
+            .compareTo(savedOrder.getAmount()));
 
         Assertions.assertEquals(optionalCustomer.get().getId(), savedOrder.getCustomer().getId());
         Assertions.assertEquals(LocalDate.now(), savedOrder.getDate().toLocalDate());
 
         Assertions.assertEquals(0, items.stream()
-                .map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .compareTo(savedOrder.getPayment().getAmount()));
+            .map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+            .reduce(BigDecimal.ZERO, BigDecimal::add)
+            .compareTo(savedOrder.getPayment().getAmount()));
 
     }
 
@@ -92,17 +91,17 @@ public class OrderServiceIT {
         List<OrderItem> items = createOrderItems(true);
 
         Assertions.assertTrue(
-                items.stream()
-                        .map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-                        .reduce(BigDecimal.ZERO, BigDecimal::add)
-                        .compareTo(maxAmount) > 0);
+            items.stream()
+                .map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .compareTo(maxAmount) > 0);
 
         Optional<Customer> optionalCustomer = customerRepository.findById(10020L);
 
         Assertions.assertTrue(optionalCustomer.isPresent());
 
         Assertions.assertThrows(PaymentFailedException.class,
-                () -> orderService.placeOrder(optionalCustomer.get().getId(), items));
+            () -> orderService.placeOrder(optionalCustomer.get().getId(), items));
     }
 
     @Test
@@ -151,8 +150,8 @@ public class OrderServiceIT {
         Assertions.assertEquals("5100137730185616", order.getCustomer().getCreditCard().getNumber());
         Assertions.assertEquals("Bern", order.getCustomer().getAddress().getCity());
         Assertions.assertEquals(order.getAmount(), order.getItems().stream()
-                .map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add));
+            .map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+            .reduce(BigDecimal.ZERO, BigDecimal::add));
 
 
     }
@@ -183,9 +182,9 @@ public class OrderServiceIT {
         long id = 100022L;
 
         orderService.cancelOrder(id);
-        Optional<Order> movifiedlOrder = orderRepository.findById(id);
-        Assertions.assertTrue(movifiedlOrder.isPresent());
-        Assertions.assertEquals(OrderStatus.CANCELLED, movifiedlOrder.get().getStatus());
+        Optional<Order> cancelledOrder = orderRepository.findById(id);
+        Assertions.assertTrue(cancelledOrder.isPresent());
+        Assertions.assertEquals(OrderStatus.CANCELLED, cancelledOrder.get().getStatus());
     }
 
     @Test
