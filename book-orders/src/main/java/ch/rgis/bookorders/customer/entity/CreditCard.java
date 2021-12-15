@@ -1,19 +1,21 @@
 package ch.rgis.bookorders.customer.entity;
 
+import com.sun.istack.NotNull;
+
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 @Embeddable
 public class CreditCard {
-
+    @NotNull
     @Enumerated(EnumType.STRING)
     private CreditCardType type;
-
+    @NotNull
     private String number;
-
+    @NotNull
     private Integer expirationMonth;
-
+    @NotNull
     private Integer expirationYear;
 
 

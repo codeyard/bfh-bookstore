@@ -1,5 +1,7 @@
 package ch.rgis.bookcatalog.entity;
 
+import com.sun.istack.NotNull;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.math.BigDecimal;
@@ -8,20 +10,21 @@ import java.math.BigDecimal;
 public class Book {
 
     @Id
+    @NotNull
     private String isbn;
-
+    @NotNull
     private String title;
 
     private String subtitle;
-
+    @NotNull
     private String authors;
-
+    @NotNull
     private String publisher;
     private Integer publicationYear;
     private Integer numberOfPages;
     private String description;
     private String imageUrl;
-
+    @NotNull
     private BigDecimal price;
 
 

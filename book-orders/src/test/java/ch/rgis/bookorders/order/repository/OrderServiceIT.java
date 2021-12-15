@@ -12,6 +12,7 @@ import ch.rgis.bookorders.order.exception.OrderAlreadyShippedException;
 import ch.rgis.bookorders.order.exception.OrderNotFoundException;
 import ch.rgis.bookorders.order.exception.PaymentFailedException;
 import ch.rgis.bookorders.order.service.OrderService;
+import org.hibernate.jdbc.Expectation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.*;
 
 @SpringBootTest
 public class OrderServiceIT {
@@ -100,8 +101,11 @@ public class OrderServiceIT {
 
         Assertions.assertTrue(optionalCustomer.isPresent());
 
-        Assertions.assertThrows(PaymentFailedException.class,
+        PaymentFailedException exception = Assertions.assertThrows(PaymentFailedException.class,
             () -> orderService.placeOrder(optionalCustomer.get().getId(), items));
+
+        Assertions.assertEquals(PaymentFailedException.ErrorCode.AMOUNT_EXCEEDS_LIMIT, exception.getCode());
+
     }
 
     @Test
@@ -114,7 +118,9 @@ public class OrderServiceIT {
         optionalCustomer.get().getCreditCard().setExpirationYear(LocalDateTime.now().getYear() - 1);
         customerRepository.saveAndFlush(optionalCustomer.get());
 
-        assertThrows(PaymentFailedException.class, () -> orderService.placeOrder(optionalCustomer.get().getId(), items));
+        PaymentFailedException exception = assertThrows(PaymentFailedException.class, () -> orderService.placeOrder(optionalCustomer.get().getId(), items));
+
+        Assertions.assertEquals(PaymentFailedException.ErrorCode.CREDIT_CARD_EXPIRED, exception.getCode());
     }
 
     @Test
@@ -127,7 +133,9 @@ public class OrderServiceIT {
         optionalCustomer.get().getCreditCard().setNumber("1111");
         customerRepository.saveAndFlush(optionalCustomer.get());
 
-        assertThrows(PaymentFailedException.class, () -> orderService.placeOrder(optionalCustomer.get().getId(), items));
+        PaymentFailedException exception =  assertThrows(PaymentFailedException.class, () -> orderService.placeOrder(optionalCustomer.get().getId(), items));
+        Assertions.assertEquals(PaymentFailedException.ErrorCode.INVALID_CREDIT_CARD, exception.getCode());
+
     }
 
     @Test
@@ -184,7 +192,7 @@ public class OrderServiceIT {
         orderService.cancelOrder(id);
         Optional<Order> cancelledOrder = orderRepository.findById(id);
         Assertions.assertTrue(cancelledOrder.isPresent());
-        Assertions.assertEquals(OrderStatus.CANCELLED, cancelledOrder.get().getStatus());
+        Assertions.assertEquals(OrderStatus.CANCELED, cancelledOrder.get().getStatus());
     }
 
     @Test

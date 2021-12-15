@@ -61,7 +61,7 @@ public class OrderService {
             map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
             .reduce(BigDecimal.ZERO, BigDecimal::add);
         if (totalAmount.compareTo(maxAmount) > 0) {
-            throw new PaymentFailedException();
+            throw new PaymentFailedException(PaymentFailedException.ErrorCode.AMOUNT_EXCEEDS_LIMIT);
         }
 
         // Case 2: Credit card expired
@@ -69,15 +69,15 @@ public class OrderService {
         LocalDate initial = LocalDate.of(creditCard.getExpirationYear(), creditCard.getExpirationMonth(), 1);
         LocalDate expirationDate = initial.with(lastDayOfMonth());
         if (expirationDate.isBefore(LocalDate.now())) {
-            throw new PaymentFailedException();
+            throw new PaymentFailedException(PaymentFailedException.ErrorCode.CREDIT_CARD_EXPIRED);
         }
 
         // Case 3: Credit card number invalid
-        String regex = "(r'^[0-9]{12}$|^[0-9]{14}$|^[0-9]{16}$)"; // TODO: CHECK FOR REGEX
+        String regex = "(r'^[0-9]{12}$|^[0-9]{14}$|^[0-9]{16}$)";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(creditCard.getNumber().replaceAll("-", ""));
         if (!matcher.matches()) {
-            throw new PaymentFailedException();
+            throw new PaymentFailedException(PaymentFailedException.ErrorCode.INVALID_CREDIT_CARD);
         }
 
         Order order = new Order();
@@ -140,7 +140,7 @@ public class OrderService {
             throw new OrderAlreadyShippedException();
         }
 
-        order.setStatus(OrderStatus.CANCELLED);
+        order.setStatus(OrderStatus.CANCELED);
         orderRepository.saveAndFlush(order);
     }
 }

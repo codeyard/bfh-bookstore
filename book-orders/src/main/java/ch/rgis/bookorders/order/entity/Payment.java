@@ -1,5 +1,7 @@
 package ch.rgis.bookorders.order.entity;
 
+import com.sun.istack.NotNull;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -8,15 +10,18 @@ import java.time.LocalDateTime;
 public class Payment {
 
     @Id
+    @NotNull
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "payment_seq")
     @SequenceGenerator(name = "payment_seq", sequenceName = "payment_seq")
     private Long id;
-
+    @NotNull
     @Column(name = "payment_date")
     private LocalDateTime date;
-
+    @NotNull
     private BigDecimal amount;
+    @NotNull
     private String creditCardNumber;
+    @NotNull
     private String transactionId;
 
     // TODO Add Order entity? (as according to API documentation)

@@ -1,27 +1,31 @@
 package ch.rgis.bookorders.customer.entity;
 
+import com.sun.istack.NotNull;
+
 import javax.persistence.*;
 
 @Entity
 public class Customer {
 
     @Id
+    @NotNull
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customer_seq")
     @SequenceGenerator(name = "customer_seq", sequenceName = "customer_seq")
     private Long id;
 
+    @NotNull
     private String firstName;
-
+    @NotNull
     private String lastName;
-
+    @NotNull
     private String email;
-
+    @NotNull
     @Column(unique = true)
     private String username;
-
+    @NotNull
     @Embedded()
     private Address address;
-
+    @NotNull
     @Embedded()
     private CreditCard creditCard;
 

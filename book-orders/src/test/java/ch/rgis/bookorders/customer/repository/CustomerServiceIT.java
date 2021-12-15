@@ -6,6 +6,7 @@ import ch.rgis.bookorders.customer.entity.CreditCardType;
 import ch.rgis.bookorders.customer.entity.Customer;
 import ch.rgis.bookorders.customer.exception.CustomerNotFoundException;
 import ch.rgis.bookorders.customer.exception.UsernameAlreadyExistsException;
+import ch.rgis.bookorders.customer.exception.UsernameNotMatchingException;
 import ch.rgis.bookorders.customer.service.CustomerService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
+
+import static org.junit.Assert.assertTrue;
 
 @SpringBootTest
 public class CustomerServiceIT {
@@ -56,9 +59,9 @@ public class CustomerServiceIT {
     @Test
     void updateCustomer_successful() {
         Optional<Customer> customer = customerRepository.findByEmail("nunigu@gmail.com");
+        Assertions.assertTrue(customer.isPresent());
         Assertions.assertEquals("Igor", customer.get().getFirstName());
 
-        customer.get().setUsername("thebrocode");
         customer.get().setFirstName("Barney");
         customer.get().setLastName("Stinson");
         Assertions.assertDoesNotThrow(() -> customerService.updateCustomer(customer.get()));
@@ -66,7 +69,6 @@ public class CustomerServiceIT {
         Optional<Customer> customerUpdated = customerRepository.findByEmail("nunigu@gmail.com");
         Assertions.assertEquals("Barney", customerUpdated.get().getFirstName());
         Assertions.assertEquals("Stinson", customerUpdated.get().getLastName());
-        Assertions.assertEquals("thebrocode", customerUpdated.get().getUsername());
     }
 
     @Test
@@ -77,13 +79,14 @@ public class CustomerServiceIT {
     }
 
     @Test
-    void updateCustomer_throwsUsernameAlreadyExistsException() {
+    void updateCustomer_throwsUsernameNotMatchingException() {
         Optional<Customer> customer = customerRepository.findByEmail("cpryora@huffingtonpost.com");
+        Assertions.assertTrue(customer.isPresent());
         Assertions.assertEquals("Cynthia", customer.get().getFirstName());
         Assertions.assertEquals("cpryora", customer.get().getUsername());
 
         customer.get().setUsername("sreami");
-        Assertions.assertThrows(UsernameAlreadyExistsException.class, () -> customerService.updateCustomer(customer.get()));
+        Assertions.assertThrows(UsernameNotMatchingException.class, () -> customerService.updateCustomer(customer.get()));
     }
 
     private Customer createCustomer() {

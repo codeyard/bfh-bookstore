@@ -2,6 +2,7 @@ package ch.rgis.bookorders.order.entity;
 
 import ch.rgis.bookorders.customer.entity.Address;
 import ch.rgis.bookorders.customer.entity.Customer;
+import com.sun.istack.NotNull;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -14,15 +15,16 @@ import java.util.List;
 public class Order {
 
     @Id
+    @NotNull
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "book_order_seq")
     @SequenceGenerator(name = "book_order_seq", sequenceName = "book_order_seq")
     private Long id;
-
+    @NotNull
     @Column(name = "order_date")
     private LocalDateTime date;
-
+    @NotNull
     private BigDecimal amount;
-
+    @NotNull
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
@@ -35,9 +37,10 @@ public class Order {
      * Since the payment Entity only needs to be modified when the Order is created or deleted, there is
      * no other reason to handle its state in the same operations as its owning side.
      */
+    @NotNull
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private Payment payment;
-
+    @NotNull
     @ManyToOne()
     private Customer customer;
 

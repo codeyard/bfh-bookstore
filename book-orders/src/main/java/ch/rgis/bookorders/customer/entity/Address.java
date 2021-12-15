@@ -1,18 +1,20 @@
 package ch.rgis.bookorders.customer.entity;
 
+import com.sun.istack.NotNull;
+
 import javax.persistence.Embeddable;
 
 @Embeddable
 public class Address {
-
+    @NotNull
     private String street;
 
     private String stateProvince;
-
+    @NotNull
     private String postalCode;
-
+    @NotNull
     private String city;
-
+    @NotNull
     private String country;
 
 

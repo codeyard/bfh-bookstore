@@ -3,6 +3,7 @@ package ch.rgis.bookorders.customer.service;
 import ch.rgis.bookorders.customer.entity.Customer;
 import ch.rgis.bookorders.customer.exception.CustomerNotFoundException;
 import ch.rgis.bookorders.customer.exception.UsernameAlreadyExistsException;
+import ch.rgis.bookorders.customer.exception.UsernameNotMatchingException;
 import ch.rgis.bookorders.customer.repository.CustomerRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -53,14 +54,13 @@ public class CustomerService {
      * @param customer - the new data of the customer (username must not change)
      * @return the data of the updated customer
      * @throws CustomerNotFoundException      - if no customer with the corresponding identifier exists
-     * @throws UsernameAlreadyExistsException - if the username is to be changed and the new username already exists
+     * @throws UsernameNotMatchingException - if the username does not match the existing username
      */
-    public Customer updateCustomer(Customer customer) throws CustomerNotFoundException, UsernameAlreadyExistsException {
-        findCustomer(customer.getId());
-        try {
-            return customerRepository.saveAndFlush(customer);
-        } catch (DataIntegrityViolationException e) {
-            throw new UsernameAlreadyExistsException();
-        }
+    public Customer updateCustomer(Customer customer) throws CustomerNotFoundException, UsernameNotMatchingException {
+        Customer customerFound = findCustomer(customer.getId());
+        if (!customerFound.getUsername().equals(customer.getUsername()))
+            throw new UsernameNotMatchingException();
+
+        return customerRepository.saveAndFlush(customer);
     }
 }
