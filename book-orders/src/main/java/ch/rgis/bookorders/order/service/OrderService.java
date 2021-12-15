@@ -13,6 +13,7 @@ import ch.rgis.bookorders.order.exception.OrderAlreadyShippedException;
 import ch.rgis.bookorders.order.exception.OrderNotFoundException;
 import ch.rgis.bookorders.order.exception.PaymentFailedException;
 import ch.rgis.bookorders.order.repository.OrderRepository;
+import ch.rgis.bookorders.shipping.ShippingClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -33,15 +34,16 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 @Service
 public class OrderService {
 
+    private final OrderRepository orderRepository;
+    private final CustomerService customerService;
+    private final ShippingClient shippingClient;
     @Value("${payment.maxAmount:1000}")
     private BigDecimal maxAmount;
 
-    private final OrderRepository orderRepository;
-    private final CustomerService customerService;
-
-    public OrderService(OrderRepository orderRepository, CustomerService customerService) {
+    public OrderService(OrderRepository orderRepository, CustomerService customerService, ShippingClient shippingClient) {
         this.orderRepository = orderRepository;
         this.customerService = customerService;
+        this.shippingClient = shippingClient;
     }
 
     /**
@@ -58,8 +60,8 @@ public class OrderService {
 
         // Case 1: Total order amount too high
         BigDecimal totalAmount = items.stream().
-            map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
         if (totalAmount.compareTo(maxAmount) > 0) {
             throw new PaymentFailedException(PaymentFailedException.ErrorCode.AMOUNT_EXCEEDS_LIMIT);
         }
@@ -96,7 +98,9 @@ public class OrderService {
         order.setCustomer(customer);
         order.setItems(items);
 
-        return orderRepository.saveAndFlush(order);
+        orderRepository.saveAndFlush(order);
+        shippingClient.sendShippingOrder(order);
+        return order;
     }
 
     /**
@@ -142,5 +146,6 @@ public class OrderService {
 
         order.setStatus(OrderStatus.CANCELED);
         orderRepository.saveAndFlush(order);
+        shippingClient.sendCancellation(order.getId());
     }
 }
