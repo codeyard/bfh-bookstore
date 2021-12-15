@@ -1,4 +1,4 @@
-package ch.rgis.bookorders.shipping;
+package ch.rgis.bookorders.shipping.dto;
 
 
 import ch.rgis.bookorders.order.entity.Order;

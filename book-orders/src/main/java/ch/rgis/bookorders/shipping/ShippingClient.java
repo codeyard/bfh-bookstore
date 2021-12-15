@@ -3,6 +3,8 @@ package ch.rgis.bookorders.shipping;
 import ch.rgis.bookorders.order.entity.Order;
 import ch.rgis.bookorders.order.entity.OrderStatus;
 import ch.rgis.bookorders.order.repository.OrderRepository;
+import ch.rgis.bookorders.shipping.dto.ShippingInfo;
+import ch.rgis.bookorders.shipping.dto.ShippingOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;

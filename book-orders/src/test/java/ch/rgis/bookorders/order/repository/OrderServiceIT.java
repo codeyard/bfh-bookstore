@@ -67,7 +67,7 @@ public class OrderServiceIT {
         Order savedOrder = savedOrderOptional.get();
 
 
-        Assertions.assertEquals(OrderStatus.ACCEPTED, savedOrder.getStatus());
+        Assertions.assertEquals(OrderStatus.PROCESSING, savedOrder.getStatus());
         Assertions.assertEquals(optionalCustomer.get().getAddress(), savedOrder.getAddress());
         Assertions.assertEquals(2, savedOrder.getItems().size());
 
