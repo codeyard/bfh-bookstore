@@ -1,5 +1,16 @@
 package ch.rgis.bookshipping.dto;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.jms.support.converter.MessageConversionException;
+import org.springframework.jms.support.converter.MessageConverter;
+import org.springframework.stereotype.Component;
+
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+
 public class ShippingInfo {
     private Long orderId;
     private ShippingOrder.OrderStatus status;
@@ -27,4 +38,5 @@ public class ShippingInfo {
     public void setStatus(ShippingOrder.OrderStatus status) {
         this.status = status;
     }
+
 }

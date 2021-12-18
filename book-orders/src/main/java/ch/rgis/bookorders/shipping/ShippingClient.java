@@ -54,7 +54,6 @@ public class ShippingClient {
         jmsTemplate.send(cancelQueue, session -> {
             try {
                 String content = new ObjectMapper().writeValueAsString(orderId);
-                TextMessage textMessage = session.createTextMessage(content);
                 // TODO CHECK IF THIS PROCESS IS SYNCHRONOUSLY OR NOT? CURRENTLY ASYNC
                 // textMessage.setJMSCorrelationID(UUID.randomUUID().toString());
                 // textMessage.setJMSDestination();
@@ -77,7 +76,7 @@ public class ShippingClient {
                         orderRepository.saveAndFlush(order);
                     });
         } catch (JMSException | JsonProcessingException e) {
-            new RuntimeException();
+            throw new RuntimeException();
         }
     }
 }
