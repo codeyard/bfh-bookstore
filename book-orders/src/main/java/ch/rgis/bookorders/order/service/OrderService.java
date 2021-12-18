@@ -100,6 +100,8 @@ public class OrderService {
 
         orderRepository.saveAndFlush(order);
         shippingClient.sendShippingOrder(order);
+
+
         return order;
     }
 
@@ -144,7 +146,6 @@ public class OrderService {
             throw new OrderAlreadyShippedException();
         }
 
-        order.setStatus(OrderStatus.CANCELED);
         orderRepository.saveAndFlush(order);
         shippingClient.sendCancellation(order.getId());
     }

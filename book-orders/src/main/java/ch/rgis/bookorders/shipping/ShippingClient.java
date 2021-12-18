@@ -25,6 +25,8 @@ public class ShippingClient {
     private String orderQueue;
     @Value("${shipping.cancel-queue}")
     private String cancelQueue;
+    @Value("${shipping.info-queue}")
+    private String infoQueue;
 
     public ShippingClient(OrderRepository orderRepository, JmsTemplate jmsTemplate) {
         this.orderRepository = orderRepository;
@@ -32,6 +34,7 @@ public class ShippingClient {
     }
 
     public void sendShippingOrder(Order order) {
+        // TODO SET STATUS HERE OR IN SERVICE?
         order.setStatus(OrderStatus.PROCESSING);
         orderRepository.saveAndFlush(order);
 
@@ -48,25 +51,35 @@ public class ShippingClient {
     }
 
     public void sendCancellation(Long orderId) {
+        System.out.println("SENDING CANCELLATION....");
         jmsTemplate.send(cancelQueue, session -> {
             try {
                 String content = new ObjectMapper().writeValueAsString(orderId);
+                TextMessage textMessage = session.createTextMessage(content);
+                // TODO CHECK IF THIS PROCESS IS SYNCHRONOUSLY OR NOT? CURRENTLY ASYNC
+                // textMessage.setJMSCorrelationID(UUID.randomUUID().toString());
+                // textMessage.setJMSDestination();
                 return session.createTextMessage(content);
-            } catch (JsonProcessingException e) {
+            } catch (JsonProcessingException | JMSException e) {
                 throw new RuntimeException(e);
             }
         });
     }
 
     @JmsListener(destination = "${shipping.info-queue}")
-    public void receiveShippingInfo(Message message) throws JMSException, JsonProcessingException {
-        String content = ((TextMessage) message).getText();
-        ShippingInfo shippingInfo = new ObjectMapper().readValue(content, ShippingInfo.class);
+    public void receiveShippingInfo(Message message) {
+        System.out.println("RECEIVING CANCELLATION FROM SHIPPING SERVICE....");
+        try {
+            String content = ((TextMessage) message).getText();
+            ShippingInfo shippingInfo = new ObjectMapper().readValue(content, ShippingInfo.class);
 
-        orderRepository.findById(shippingInfo.orderId())
-                .ifPresent(order -> {
-                    order.setStatus(shippingInfo.status());
-                    orderRepository.saveAndFlush(order);
-                });
+            orderRepository.findById(shippingInfo.orderId())
+                    .ifPresent(order -> {
+                        order.setStatus(shippingInfo.status());
+                        orderRepository.saveAndFlush(order);
+                    });
+        } catch (JMSException | JsonProcessingException e) {
+            new RuntimeException();
+        }
     }
 }

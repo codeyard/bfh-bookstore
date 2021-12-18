@@ -70,6 +70,11 @@ public class ShippingOrder {
                         BigDecimal price) {
     }
 
+    public enum OrderStatus {
+        PROCESSING, SHIPPED, CANCELED
+    }
+
+
 
     @Override
     public String toString() {
