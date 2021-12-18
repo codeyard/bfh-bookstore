@@ -2,7 +2,6 @@ package ch.rgis.bookshipping;
 
 import ch.rgis.bookshipping.dto.ShippingInfo;
 import ch.rgis.bookshipping.dto.ShippingOrder;
-import ch.rgis.bookshipping.service.ShippingService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,14 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
-
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 public class ShippingServiceIT {
-
-    @Autowired
-    private ShippingService shippingService;
 
     @Autowired
     private JmsTemplate jmsTemplate;
@@ -33,7 +27,7 @@ public class ShippingServiceIT {
 
 
     @Test
-    void receiveShippingOrder_successful()  {
+    void receiveShippingOrder_successful() {
         ShippingOrder shippingOrder = new ShippingOrder();
         shippingOrder.setOrderId(100000L);
         jmsTemplate.convertAndSend(orderQueue, shippingOrder);
