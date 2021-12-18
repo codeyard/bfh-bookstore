@@ -1,4 +1,4 @@
-package ch.rgis.bookorders.bookshipping.dto;
+package ch.rgis.bookshipping.dto;
 
 import java.math.BigDecimal;
 import java.util.List;

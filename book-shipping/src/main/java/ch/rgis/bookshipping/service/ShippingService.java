@@ -1,7 +1,7 @@
-package ch.rgis.bookorders.bookshipping.service;
+package ch.rgis.bookshipping.service;
 
-import ch.rgis.bookorders.bookshipping.dto.ShippingInfo;
-import ch.rgis.bookorders.bookshipping.dto.ShippingOrder;
+import ch.rgis.bookshipping.dto.ShippingInfo;
+import ch.rgis.bookshipping.dto.ShippingOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,8 +27,13 @@ public class ShippingService {
 
     private ShippingInfo shippingInfo = new ShippingInfo();
 
+    public ShippingInfo getShippingInfo() {
+        return shippingInfo;
+    }
+
     @JmsListener(destination = "${shipping.order-queue}")
     public void receiveShippingOrder(Message message) throws JMSException, JsonProcessingException {
+        System.out.println("receiveShippingOrder entered");
         String request = ((TextMessage) message).getText();
         ShippingOrder shippingOrder = new ObjectMapper().readValue(request, ShippingOrder.class);
         shippingInfo.setOrderId(shippingOrder.getOrderId());
@@ -38,7 +43,6 @@ public class ShippingService {
 
     @JmsListener(destination = "${shipping.cancel-queue}")
     public void receiveCancellation(TextMessage message) throws JMSException {
-        System.out.println("RECEIVING CANCELLATION....");
         Long orderId = Long.valueOf(message.getText());
         shippingInfo.setOrderId(orderId);
         shippingInfo.setStatus(ShippingOrder.OrderStatus.CANCELED);
@@ -47,7 +51,6 @@ public class ShippingService {
     }
 
     public void sendShippingInfo() {
-        System.out.println("SENDING CANCELLATION TO CLIENT....");
         jmsTemplate.send(infoQueue, session -> {
             String content;
             try {

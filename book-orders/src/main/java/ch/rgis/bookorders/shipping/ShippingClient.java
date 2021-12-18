@@ -51,7 +51,6 @@ public class ShippingClient {
     }
 
     public void sendCancellation(Long orderId) {
-        System.out.println("SENDING CANCELLATION....");
         jmsTemplate.send(cancelQueue, session -> {
             try {
                 String content = new ObjectMapper().writeValueAsString(orderId);
@@ -68,7 +67,6 @@ public class ShippingClient {
 
     @JmsListener(destination = "${shipping.info-queue}")
     public void receiveShippingInfo(Message message) {
-        System.out.println("RECEIVING CANCELLATION FROM SHIPPING SERVICE....");
         try {
             String content = ((TextMessage) message).getText();
             ShippingInfo shippingInfo = new ObjectMapper().readValue(content, ShippingInfo.class);

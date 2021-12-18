@@ -1,4 +1,4 @@
-package ch.rgis.bookorders.bookshipping.dto;
+package ch.rgis.bookshipping.dto;
 
 public class ShippingInfo {
     private Long orderId;

@@ -1,4 +1,4 @@
-package ch.rgis.bookorders.bookshipping;
+package ch.rgis.bookshipping;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
