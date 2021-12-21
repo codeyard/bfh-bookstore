@@ -54,19 +54,19 @@ public class ShippingOrder {
     //</editor-fold>
 
 
-    private record Customer(Long id, String firstName, String lastName,
+    public record Customer(Long id, String firstName, String lastName,
                             String email) {
     }
 
-    private record Address(String street, String city, String stateProvince,
+    public record Address(String street, String city, String stateProvince,
                            String postalCode, String country) {
     }
 
-    private record OrderItem(Long id, Book book,
+    public record OrderItem(Long id, Book book,
                              Integer quantity) {
     }
 
-    private record Book(String isbn, String title, String authors, String publisher,
+    public record Book(String isbn, String title, String authors, String publisher,
                         BigDecimal price) {
     }
 

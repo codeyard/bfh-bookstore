@@ -17,20 +17,26 @@ import javax.jms.TextMessage;
 public class ShippingService {
 
     private final JmsTemplate jmsTemplate;
+    private final EmailService emailService;
 
     @Value("${shipping.info-queue}")
     private String infoQueue;
 
-    public ShippingService(JmsTemplate jmsTemplate) {
+    @Value("${shipping.delay}")
+    private int delay;
+
+    public ShippingService(JmsTemplate jmsTemplate, EmailService emailService) {
         this.jmsTemplate = jmsTemplate;
+        this.emailService = emailService;
     }
 
     private final ShippingInfo shippingInfo = new ShippingInfo();
+    private ShippingOrder shippingOrder = new ShippingOrder();
 
     @JmsListener(destination = "${shipping.order-queue}")
     public void receiveShippingOrder(Message message) throws JMSException, JsonProcessingException {
         String request = ((TextMessage) message).getText();
-        ShippingOrder shippingOrder = new ObjectMapper().readValue(request, ShippingOrder.class);
+        shippingOrder = new ObjectMapper().readValue(request, ShippingOrder.class);
         shippingInfo.setOrderId(shippingOrder.getOrderId());
         processOrder();
     }
@@ -52,7 +58,7 @@ public class ShippingService {
         shippingInfo.setStatus(ShippingOrder.OrderStatus.PROCESSING);
         sendShippingInfo();
         try {
-            Thread.sleep(10000);
+            Thread.sleep(delay);
             shipOrder();
         } catch (InterruptedException e) {
             throw new RuntimeException();
@@ -62,5 +68,6 @@ public class ShippingService {
     public void shipOrder() {
         shippingInfo.setStatus(ShippingOrder.OrderStatus.SHIPPED);
         sendShippingInfo();
+        emailService.sendSimpleMessage(shippingOrder);
     }
 }
