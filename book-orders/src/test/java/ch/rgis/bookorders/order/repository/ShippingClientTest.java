@@ -2,17 +2,20 @@ package ch.rgis.bookorders.order.repository;
 
 import ch.rgis.bookorders.order.entity.OrderStatus;
 import ch.rgis.bookorders.shipping.dto.ShippingInfo;
+import ch.rgis.bookorders.shipping.service.EmailService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.jms.core.JmsTemplate;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.jms.Message;
-import javax.jms.TextMessage;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 
 @SpringBootTest
 public class ShippingClientTest {
@@ -26,10 +29,12 @@ public class ShippingClientTest {
     @Autowired
     private OrderRepository orderRepository;
 
+    @MockBean
+    private EmailService emailService;
 
 
     @Test
-    void receiveCancellation_cancelled() {
+    void receiveCancellation_successfully() {
         Long orderId = 100020L;
 
         jmsTemplate.send(infoQueue, session -> {
@@ -44,12 +49,62 @@ public class ShippingClientTest {
             }
         });
 
+        jmsTemplate.setReceiveTimeout(1000);
         jmsTemplate.receive(infoQueue);
 
-        orderRepository.findById(orderId).ifPresent(order -> {
-            Assertions.assertEquals(order.getStatus(), OrderStatus.CANCELED);
+        orderRepository.findById(orderId).ifPresent(order -> Assertions.assertEquals(order.getStatus(), OrderStatus.CANCELED));
+
+        verify(emailService, times(1)).sendSimpleMessage(orderId);
+
+    }
+
+    @Test
+    void receiveProcessing_successfully() {
+        Long orderId = 100020L;
+
+        jmsTemplate.send(infoQueue, session -> {
+            ShippingInfo shippingInfo = new ShippingInfo();
+            shippingInfo.setOrderId(orderId);
+            shippingInfo.setStatus(OrderStatus.PROCESSING);
+            try {
+                String content = new ObjectMapper().writeValueAsString(shippingInfo);
+                return session.createTextMessage(content);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
         });
 
+        jmsTemplate.setReceiveTimeout(1000);
+        jmsTemplate.receive(infoQueue);
+
+        orderRepository.findById(orderId).ifPresent(order -> Assertions.assertEquals(order.getStatus(), OrderStatus.PROCESSING));
+
+        verify(emailService, times(1)).sendSimpleMessage(orderId);
+
+    }
+
+    @Test
+    void receiveShipment_successfully() {
+        Long orderId = 100020L;
+
+        jmsTemplate.send(infoQueue, session -> {
+            ShippingInfo shippingInfo = new ShippingInfo();
+            shippingInfo.setOrderId(orderId);
+            shippingInfo.setStatus(OrderStatus.SHIPPED);
+            try {
+                String content = new ObjectMapper().writeValueAsString(shippingInfo);
+                return session.createTextMessage(content);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        jmsTemplate.setReceiveTimeout(1000);
+        jmsTemplate.receive(infoQueue);
+
+        orderRepository.findById(orderId).ifPresent(order -> Assertions.assertEquals(order.getStatus(), OrderStatus.SHIPPED));
+
+        verify(emailService, times(1)).sendSimpleMessage(orderId);
 
     }
 
