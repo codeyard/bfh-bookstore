@@ -5,6 +5,7 @@ import ch.rgis.bookorders.order.entity.OrderStatus;
 import ch.rgis.bookorders.order.repository.OrderRepository;
 import ch.rgis.bookorders.shipping.dto.ShippingInfo;
 import ch.rgis.bookorders.shipping.dto.ShippingOrder;
+import ch.rgis.bookorders.shipping.service.EmailService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,13 +29,15 @@ public class ShippingClient {
     @Value("${shipping.info-queue}")
     private String infoQueue;
 
-    public ShippingClient(OrderRepository orderRepository, JmsTemplate jmsTemplate) {
+    private EmailService emailService;
+
+    public ShippingClient(OrderRepository orderRepository, JmsTemplate jmsTemplate, EmailService emailService) {
         this.orderRepository = orderRepository;
         this.jmsTemplate = jmsTemplate;
+        this.emailService = emailService;
     }
 
     public void sendShippingOrder(Order order) {
-        // TODO SET STATUS HERE OR IN SERVICE?
         order.setStatus(OrderStatus.PROCESSING);
         orderRepository.saveAndFlush(order);
 
@@ -54,9 +57,6 @@ public class ShippingClient {
         jmsTemplate.send(cancelQueue, session -> {
             try {
                 String content = new ObjectMapper().writeValueAsString(orderId);
-                // TODO CHECK IF THIS PROCESS IS SYNCHRONOUSLY OR NOT? CURRENTLY ASYNC
-                // textMessage.setJMSCorrelationID(UUID.randomUUID().toString());
-                // textMessage.setJMSDestination();
                 return session.createTextMessage(content);
             } catch (JsonProcessingException | JMSException e) {
                 throw new RuntimeException(e);
@@ -70,10 +70,11 @@ public class ShippingClient {
             String content = ((TextMessage) message).getText();
             ShippingInfo shippingInfo = new ObjectMapper().readValue(content, ShippingInfo.class);
 
-            orderRepository.findById(shippingInfo.orderId())
+            orderRepository.findById(shippingInfo.getOrderId())
                     .ifPresent(order -> {
-                        order.setStatus(shippingInfo.status());
+                        order.setStatus(shippingInfo.getStatus());
                         orderRepository.saveAndFlush(order);
+                        emailService.sendSimpleMessage(shippingInfo.getOrderId());
                     });
         } catch (JMSException | JsonProcessingException e) {
             throw new RuntimeException();

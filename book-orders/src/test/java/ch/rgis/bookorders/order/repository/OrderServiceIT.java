@@ -12,12 +12,19 @@ import ch.rgis.bookorders.order.exception.OrderAlreadyShippedException;
 import ch.rgis.bookorders.order.exception.OrderNotFoundException;
 import ch.rgis.bookorders.order.exception.PaymentFailedException;
 import ch.rgis.bookorders.order.service.OrderService;
+import ch.rgis.bookorders.shipping.ShippingClient;
+import ch.rgis.bookorders.shipping.dto.ShippingInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.jms.core.JmsTemplate;
+import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
+import javax.jms.Message;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -29,6 +36,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 public class OrderServiceIT {
@@ -42,8 +51,13 @@ public class OrderServiceIT {
     @Autowired
     private CustomerRepository customerRepository;
 
+    @MockBean
+    private ShippingClient shippingClient;
+
+
     @Value("${payment.maxAmount}")
     private BigDecimal maxAmount;
+
 
     @Test
     void placeOrder_successful() throws CustomerNotFoundException, PaymentFailedException {
@@ -66,7 +80,7 @@ public class OrderServiceIT {
         Order savedOrder = savedOrderOptional.get();
 
 
-        Assertions.assertEquals(OrderStatus.PROCESSING, savedOrder.getStatus());
+        Assertions.assertEquals(OrderStatus.ACCEPTED, savedOrder.getStatus());
         Assertions.assertEquals(optionalCustomer.get().getAddress(), savedOrder.getAddress());
         Assertions.assertEquals(2, savedOrder.getItems().size());
 
@@ -82,6 +96,8 @@ public class OrderServiceIT {
                 .map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .compareTo(savedOrder.getPayment().getAmount()));
+
+        verify(shippingClient, times(1)).sendShippingOrder(order);
 
     }
 
@@ -191,7 +207,9 @@ public class OrderServiceIT {
         orderService.cancelOrder(id);
         Optional<Order> cancelledOrder = orderRepository.findById(id);
         Assertions.assertTrue(cancelledOrder.isPresent());
-        Assertions.assertEquals(OrderStatus.CANCELED, cancelledOrder.get().getStatus());
+        Assertions.assertEquals(OrderStatus.ACCEPTED, cancelledOrder.get().getStatus());
+
+        verify(shippingClient, times(1)).sendCancellation(id);
     }
 
     @Test
@@ -237,6 +255,7 @@ public class OrderServiceIT {
         return new ArrayList<>(Arrays.asList(orderItem1, orderItem2));
 
     }
+
 
 
 }

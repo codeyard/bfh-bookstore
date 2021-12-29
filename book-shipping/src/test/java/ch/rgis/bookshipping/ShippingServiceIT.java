@@ -2,18 +2,13 @@ package ch.rgis.bookshipping;
 
 import ch.rgis.bookshipping.dto.ShippingInfo;
 import ch.rgis.bookshipping.dto.ShippingOrder;
-import ch.rgis.bookshipping.service.EmailService;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-//@ExtendWith(SpringExtension.class)
 @SpringBootTest
 public class ShippingServiceIT {
 
@@ -48,8 +43,19 @@ public class ShippingServiceIT {
 
     @Test
     void cancelShippingOrder_successful() {
-        jmsTemplate.convertAndSend(cancelQueue, 100000L);
+        ShippingOrder shippingOrder = new ShippingOrder();
+        shippingOrder.setOrderId(100001L);
 
+        System.out.println("SENDING ORDER....");
+        ShippingOrder.Customer customer = new ShippingOrder.Customer(1000L, "Igor", "Stojanovic", "i.stojanovic01@gmail.com");
+        shippingOrder.setCustomer(customer);
+        jmsTemplate.convertAndSend(orderQueue, shippingOrder);
+
+        ShippingInfo processingMessage = (ShippingInfo) jmsTemplate.receiveAndConvert(infoQueue);
+        Assertions.assertEquals(ShippingOrder.OrderStatus.PROCESSING, processingMessage.getStatus());
+
+        System.out.println("SENDING CANCELLATION....");
+        jmsTemplate.convertAndSend(cancelQueue, 100001L);
         ShippingInfo cancelMessage = (ShippingInfo) jmsTemplate.receiveAndConvert(infoQueue);
         Assertions.assertEquals(ShippingOrder.OrderStatus.CANCELED, cancelMessage.getStatus());
     }
