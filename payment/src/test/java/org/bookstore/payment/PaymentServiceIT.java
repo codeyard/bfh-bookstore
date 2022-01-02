@@ -29,7 +29,7 @@ public class PaymentServiceIT {
         Customer customer = createCustomer();
 
         Assertions.assertDoesNotThrow(
-                () -> paymentService.makePayment(customer, customer.getCreditCard(), maxAmount.subtract(BigDecimal.valueOf(1))));
+            () -> paymentService.makePayment(customer, customer.getCreditCard(), maxAmount.subtract(BigDecimal.valueOf(1))));
     }
 
     @Test
@@ -37,7 +37,7 @@ public class PaymentServiceIT {
         Customer customer = createCustomer();
 
         PaymentFailedException exception = Assertions.assertThrows(PaymentFailedException.class,
-                () -> paymentService.makePayment(customer, customer.getCreditCard(), maxAmount.add(BigDecimal.valueOf(1))));
+            () -> paymentService.makePayment(customer, customer.getCreditCard(), maxAmount.add(BigDecimal.valueOf(1))));
 
         Assertions.assertEquals(PaymentFailedException.ErrorCode.AMOUNT_EXCEEDS_LIMIT, exception.getCode());
     }
@@ -48,7 +48,7 @@ public class PaymentServiceIT {
         customer.getCreditCard().setExpirationYear(LocalDate.now().getYear() - 1);
 
         PaymentFailedException exception = Assertions.assertThrows(PaymentFailedException.class,
-                () -> paymentService.makePayment(customer, customer.getCreditCard(), maxAmount.subtract(BigDecimal.valueOf(1))));
+            () -> paymentService.makePayment(customer, customer.getCreditCard(), maxAmount.subtract(BigDecimal.valueOf(1))));
 
 
         Assertions.assertEquals(PaymentFailedException.ErrorCode.CREDIT_CARD_EXPIRED, exception.getCode());
@@ -60,7 +60,7 @@ public class PaymentServiceIT {
         customer.getCreditCard().setNumber("11111");
 
         PaymentFailedException exception = Assertions.assertThrows(PaymentFailedException.class,
-                () -> paymentService.makePayment(customer, customer.getCreditCard(), maxAmount.subtract(BigDecimal.valueOf(1))));
+            () -> paymentService.makePayment(customer, customer.getCreditCard(), maxAmount.subtract(BigDecimal.valueOf(1))));
 
         Assertions.assertEquals(PaymentFailedException.ErrorCode.INVALID_CREDIT_CARD, exception.getCode());
     }

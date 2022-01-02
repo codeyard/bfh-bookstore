@@ -40,7 +40,7 @@ public class EmailService {
             StringBuilder finalMessage = new StringBuilder();
 
             switch (order.getStatus()) {
-                case CANCELED ->  finalMessage = buildCanceledMessage(builder, order.getId());
+                case CANCELED -> finalMessage = buildCanceledMessage(builder, order.getId());
                 case PROCESSING -> finalMessage = buildProcessingMessage(builder);
                 case SHIPPED -> finalMessage = buildShippedMessage(builder, order);
             }

@@ -1,12 +1,12 @@
 package org.bookstore.customer.repository;
 
-import org.bookstore.customer.entity.CreditCardType;
-import org.bookstore.customer.entity.Customer;
-import org.bookstore.customer.exception.UsernameNotMatchingException;
 import org.bookstore.customer.entity.Address;
 import org.bookstore.customer.entity.CreditCard;
+import org.bookstore.customer.entity.CreditCardType;
+import org.bookstore.customer.entity.Customer;
 import org.bookstore.customer.exception.CustomerNotFoundException;
 import org.bookstore.customer.exception.UsernameAlreadyExistsException;
+import org.bookstore.customer.exception.UsernameNotMatchingException;
 import org.bookstore.customer.service.CustomerService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
-
-import static org.junit.Assert.assertTrue;
 
 @SpringBootTest
 public class CustomerServiceIT {

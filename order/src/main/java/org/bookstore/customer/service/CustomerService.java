@@ -1,10 +1,10 @@
 package org.bookstore.customer.service;
 
 import org.bookstore.customer.entity.Customer;
-import org.bookstore.customer.exception.UsernameNotMatchingException;
-import org.bookstore.customer.repository.CustomerRepository;
 import org.bookstore.customer.exception.CustomerNotFoundException;
 import org.bookstore.customer.exception.UsernameAlreadyExistsException;
+import org.bookstore.customer.exception.UsernameNotMatchingException;
+import org.bookstore.customer.repository.CustomerRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +53,7 @@ public class CustomerService {
      *
      * @param customer - the new data of the customer (username must not change)
      * @return the data of the updated customer
-     * @throws CustomerNotFoundException      - if no customer with the corresponding identifier exists
+     * @throws CustomerNotFoundException    - if no customer with the corresponding identifier exists
      * @throws UsernameNotMatchingException - if the username does not match the existing username
      */
     public Customer updateCustomer(Customer customer) throws CustomerNotFoundException, UsernameNotMatchingException {

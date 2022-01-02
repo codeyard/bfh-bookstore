@@ -1,9 +1,9 @@
 package org.bookstore.shipping.service;
 
-import org.bookstore.shipping.dto.ShippingInfo;
-import org.bookstore.shipping.dto.ShippingOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bookstore.shipping.dto.ShippingInfo;
+import org.bookstore.shipping.dto.ShippingOrder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;

@@ -12,7 +12,6 @@ public class Customer {
     private CreditCard creditCard;
 
 
-
     // <editor-fold desc="Getter and Setter">
 
     public Long getId() {
@@ -72,8 +71,6 @@ public class Customer {
     }
 
     // </editor-fold>
-
-
 
 
 }

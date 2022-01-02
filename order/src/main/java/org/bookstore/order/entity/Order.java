@@ -1,8 +1,8 @@
 package org.bookstore.order.entity;
 
+import com.sun.istack.NotNull;
 import org.bookstore.customer.entity.Address;
 import org.bookstore.customer.entity.Customer;
-import com.sun.istack.NotNull;
 
 import javax.persistence.*;
 import java.math.BigDecimal;

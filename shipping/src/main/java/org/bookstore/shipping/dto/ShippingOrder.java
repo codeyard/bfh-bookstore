@@ -55,25 +55,24 @@ public class ShippingOrder {
 
 
     public record Customer(Long id, String firstName, String lastName,
-                            String email) {
+                           String email) {
     }
 
     public record Address(String street, String city, String stateProvince,
-                           String postalCode, String country) {
+                          String postalCode, String country) {
     }
 
     public record OrderItem(Long id, Book book,
-                             Integer quantity) {
+                            Integer quantity) {
     }
 
     public record Book(String isbn, String title, String authors, String publisher,
-                        BigDecimal price) {
+                       BigDecimal price) {
     }
 
     public enum OrderStatus {
         PROCESSING, SHIPPED, CANCELED
     }
-
 
 
     @Override

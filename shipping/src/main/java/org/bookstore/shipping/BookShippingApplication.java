@@ -10,8 +10,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 public class BookShippingApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BookShippingApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(BookShippingApplication.class, args);
+    }
 
 }

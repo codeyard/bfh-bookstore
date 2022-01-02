@@ -1,13 +1,13 @@
 package org.bookstore.shipping;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bookstore.order.entity.Order;
 import org.bookstore.order.entity.OrderStatus;
 import org.bookstore.order.repository.OrderRepository;
 import org.bookstore.shipping.dto.ShippingInfo;
 import org.bookstore.shipping.dto.ShippingOrder;
 import org.bookstore.shipping.service.EmailService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
@@ -29,7 +29,7 @@ public class ShippingClient {
     @Value("${shipping.info-queue}")
     private String infoQueue;
 
-    private EmailService emailService;
+    private final EmailService emailService;
 
     public ShippingClient(OrderRepository orderRepository, JmsTemplate jmsTemplate, EmailService emailService) {
         this.orderRepository = orderRepository;
@@ -71,11 +71,11 @@ public class ShippingClient {
             ShippingInfo shippingInfo = new ObjectMapper().readValue(content, ShippingInfo.class);
 
             orderRepository.findById(shippingInfo.getOrderId())
-                    .ifPresent(order -> {
-                        order.setStatus(shippingInfo.getStatus());
-                        orderRepository.saveAndFlush(order);
-                        emailService.sendSimpleMessage(shippingInfo.getOrderId());
-                    });
+                .ifPresent(order -> {
+                    order.setStatus(shippingInfo.getStatus());
+                    orderRepository.saveAndFlush(order);
+                    emailService.sendSimpleMessage(shippingInfo.getOrderId());
+                });
         } catch (JMSException | JsonProcessingException e) {
             throw new RuntimeException();
         }

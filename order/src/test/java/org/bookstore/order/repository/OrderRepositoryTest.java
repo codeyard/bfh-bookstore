@@ -1,7 +1,7 @@
 package org.bookstore.order.repository;
 
-import org.bookstore.customer.repository.CustomerRepository;
 import org.bookstore.customer.entity.Customer;
+import org.bookstore.customer.repository.CustomerRepository;
 import org.bookstore.order.dto.CustomerOrderStatistics;
 import org.bookstore.order.dto.OrderInfo;
 import org.bookstore.order.entity.Book;

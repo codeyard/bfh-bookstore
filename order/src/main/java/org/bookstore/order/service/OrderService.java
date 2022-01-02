@@ -1,7 +1,7 @@
 package org.bookstore.order.service;
 
-import org.bookstore.customer.entity.Customer;
 import org.bookstore.customer.entity.CreditCard;
+import org.bookstore.customer.entity.Customer;
 import org.bookstore.customer.exception.CustomerNotFoundException;
 import org.bookstore.customer.service.CustomerService;
 import org.bookstore.order.dto.OrderInfo;
@@ -60,8 +60,8 @@ public class OrderService {
 
         // Case 1: Total order amount too high
         BigDecimal totalAmount = items.stream().
-                map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+            map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
         if (totalAmount.compareTo(maxAmount) > 0) {
             throw new PaymentFailedException(PaymentFailedException.ErrorCode.AMOUNT_EXCEEDS_LIMIT);
         }
