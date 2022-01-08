@@ -1,0 +1,65 @@
+version: "3"
+
+services:
+    bookdb:
+        image: postgres
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+        volumes:
+            - bookdb:/var/lib/postgresql/data
+        ports:
+            - "5001:5432"
+
+    catalog:
+        build: catalog
+        environment:
+            - SPRING_DATASOURCE_URL=jdbc:postgresql://bookdb:5432/postgres
+            - SPRING_DATASOURCE_USERNAME=postgres
+            - SPRING_DATASOURCE_PASSWORD=postgres
+        ports:
+            - "8001:8001"
+
+    orderdb:
+        image: postgres
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+        volumes:
+            - orderdb:/var/lib/postgresql/data
+        ports:
+            - "5002:5432"
+
+    order:
+        build: order
+        environment:
+            - SPRING_DATASOURCE_URL=jdbc:postgresql://orderdb:5432/postgres
+            - SPRING_DATASOURCE_USERNAME=postgres
+            - SPRING_DATASOURCE_PASSWORD=postgres
+            - SPRING_ACTIVEMQ_BROKERURL=tcp://activemq:61616
+            - BOOKSTORE_CATALOG_APIURL=http://catalog:8001/books
+            - BOOKSTORE_PAYMENT_APIURL=http://payment:8003/payments
+        ports:
+            - "8002:8002"
+
+    payment:
+        build: payment
+        ports:
+            - "8003:8003"
+
+    activemq:
+        image: webcenter/activemq
+        environment:
+            - ACTIVEMQ_ADMIN_LOGIN=admin
+            - ACTIVEMQ_ADMIN_PASSWORD=admin
+        ports:
+            - "8161:8161"
+
+    shipping:
+        build: shipping
+        environment:
+            - SPRING_ACTIVEMQ_BROKERURL=tcp://activemq:61616
+
+volumes:
+    bookdb: {}
+    orderdb: {}
