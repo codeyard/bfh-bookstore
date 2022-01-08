@@ -1,7 +1,8 @@
 FROM maven:3
 
+COPY . /catalog
 WORKDIR /catalog
-COPY . .
-RUN mvn clean install
+
+RUN mvn clean install -DskipTests
 
 CMD mvn spring-boot:run

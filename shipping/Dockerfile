@@ -1,7 +1,7 @@
 FROM maven:3
 
-COPY . /order
-WORKDIR /order
+COPY . /shipping
+WORKDIR /shipping
 
 RUN mvn clean install -DskipTests
 
