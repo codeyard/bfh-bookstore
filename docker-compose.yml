@@ -12,7 +12,9 @@ services:
             - "5001:5432"
 
     catalog:
-        build: catalog
+        image: catalog
+        depends_on:
+            - bookdb
         environment:
             - SPRING_DATASOURCE_URL=jdbc:postgresql://bookdb:5432/postgres
             - SPRING_DATASOURCE_USERNAME=postgres
@@ -31,7 +33,10 @@ services:
             - "5002:5432"
 
     order:
-        build: order
+        image: order
+        depends_on:
+            - orderdb
+            - activemq
         environment:
             - SPRING_DATASOURCE_URL=jdbc:postgresql://orderdb:5432/postgres
             - SPRING_DATASOURCE_USERNAME=postgres
@@ -43,7 +48,7 @@ services:
             - "8002:8002"
 
     payment:
-        build: payment
+        image: payment
         ports:
             - "8003:8003"
 
@@ -56,7 +61,9 @@ services:
             - "8161:8161"
 
     shipping:
-        build: shipping
+        image: shipping
+        depends_on:
+            - activemq
         environment:
             - SPRING_ACTIVEMQ_BROKERURL=tcp://activemq:61616
 
