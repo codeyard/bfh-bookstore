@@ -1,3 +1,8 @@
+DELETE FROM public.order_item;
+DELETE FROM public.book_order;
+DELETE FROM public.payment;
+DELETE FROM public.customer;
+
 insert into public.customer (id, username, first_name, last_name, email, address_street, address_city, address_state_province, address_postal_code, address_country, credit_card_type, credit_card_number, credit_card_expiration_month, credit_card_expiration_year)
 values  (10000, 'cscoular0', 'Corabelle', 'Scoular', 'cscoular0@tinyurl.com', 'Myrtle', 'Bern', 'BE', '3030', 'Switzerland', 'MASTER_CARD', '5100137730185616', 4, 2028),
         (10001, 'shardstaff1', 'Sherm', 'Hardstaff', 'shardstaff1@nymag.com', 'Vidon', 'Zürich', 'ZH', '8023', 'Switzerland', 'VISA', '5100174824459060', 6, 2027),
