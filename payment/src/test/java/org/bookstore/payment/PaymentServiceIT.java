@@ -1,5 +1,6 @@
 package org.bookstore.payment;
 
+import ebay.api.paypalapi.PayPalAPIAAInterface;
 import org.bookstore.payment.dto.Address;
 import org.bookstore.payment.dto.CreditCard;
 import org.bookstore.payment.dto.CreditCardType;
@@ -20,6 +21,9 @@ public class PaymentServiceIT {
 
     @Autowired
     private PaymentService paymentService;
+
+    @Autowired
+    private PayPalAPIAAInterface payPalAPIAAInterface;
 
     @Value("${payment.maxAmount}")
     private BigDecimal maxAmount;

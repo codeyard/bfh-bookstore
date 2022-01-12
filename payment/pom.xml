@@ -9,6 +9,7 @@
     <name>payment</name>
     <description>Payment service for Bookstore</description>
 
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -18,6 +19,8 @@
 
     <properties>
         <java.version>17</java.version>
+        <wsdl>https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl</wsdl>
+        <wsdlLocation>classpath:PayPalSvc.wsdl</wsdlLocation>
     </properties>
 
     <dependencies>
@@ -25,11 +28,20 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+            <version>3.4.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
+            <version>3.4.5</version>
         </dependency>
     </dependencies>
 
@@ -52,6 +64,30 @@
                         <goals>
                             <goal>integration-test</goal>
                             <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-codegen-plugin</artifactId>
+                <version>3.4.5</version>
+                <executions>
+                    <execution>
+                        <id>generate-sources</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <sourceRoot>${project.build.directory}/generated-sources/cxf</sourceRoot>
+                            <wsdlOptions>
+                                <wsdlOption>
+                                    <wsdl>${wsdl}</wsdl>
+                                    <wsdlLocation>${wsdlLocation}</wsdlLocation>
+                                    <extendedSoapHeaders>true</extendedSoapHeaders>
+                                </wsdlOption>
+                            </wsdlOptions>
+                        </configuration>
+                        <goals>
+                            <goal>wsdl2java</goal>
                         </goals>
                     </execution>
                 </executions>
