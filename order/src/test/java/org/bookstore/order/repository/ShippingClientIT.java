@@ -13,12 +13,12 @@ import org.springframework.jms.core.JmsTemplate;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
+
 
 
 @SpringBootTest
-public class ShippingClientTest {
+public class ShippingClientIT {
 
     @Autowired
     private JmsTemplate jmsTemplate;
@@ -34,7 +34,7 @@ public class ShippingClientTest {
 
 
     @Test
-    void receiveCancellation_successfully() {
+    public void receiveCancellation_successfully() {
         Long orderId = 100020L;
 
         jmsTemplate.send(infoQueue, session -> {
@@ -51,6 +51,7 @@ public class ShippingClientTest {
 
         jmsTemplate.setReceiveTimeout(1000);
         jmsTemplate.receive(infoQueue);
+
 
         orderRepository.findById(orderId).ifPresent(order -> Assertions.assertEquals(order.getStatus(), OrderStatus.CANCELED));
 
