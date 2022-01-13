@@ -2,7 +2,6 @@ package org.bookstore.payment.service;
 
 import ebay.api.paypalapi.DoDirectPaymentReq;
 import ebay.api.paypalapi.DoDirectPaymentRequestType;
-import ebay.api.paypalapi.DoDirectPaymentResponseType;
 import ebay.api.paypalapi.PayPalAPIAAInterface;
 import ebay.apis.corecomponenttypes.BasicAmountType;
 import ebay.apis.eblbasecomponents.*;
@@ -25,13 +24,12 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 @Service
 public class PaymentService {
 
+    private final PayPalAPIAAInterface paypalAPI;
     @Value("${payment.maxAmount:1000}")
     private BigDecimal maxAmount;
 
-    private final PayPalAPIAAInterface payPalAPIAAInterface;
-
     public PaymentService(PayPalAPIAAInterface payPalAPIAAInterface) {
-        this.payPalAPIAAInterface = payPalAPIAAInterface;
+        this.paypalAPI = payPalAPIAAInterface;
     }
 
     public Payment makePayment(Customer customer, CreditCard creditCard, BigDecimal amount) throws PaymentFailedException {
@@ -111,7 +109,7 @@ public class PaymentService {
 
         Holder<CustomSecurityHeaderType> header = new Holder<>(requesterCredentials);
 
-        payPalAPIAAInterface.doDirectPayment(doDirectPaymentReq, header);
+        paypalAPI.doDirectPayment(doDirectPaymentReq, header);
 
         return payment;
     }
