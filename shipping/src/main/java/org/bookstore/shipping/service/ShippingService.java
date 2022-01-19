@@ -25,9 +25,9 @@ public class ShippingService {
 
     private static final List<ShippingInfo> shippingInfoList = new ArrayList<>();
     private final ShippingInfo shippingInfo = new ShippingInfo();
-    @Value("${shipping.info-queue}")
+    @Value("${bookstore.shipping.info-queue}")
     private String infoQueue;
-    @Value("${shipping.delay}")
+    @Value("${bookstore.shipping.processing-time}")
     private int delay;
     private ShippingOrder shippingOrder = new ShippingOrder();
 
@@ -35,7 +35,7 @@ public class ShippingService {
         this.jmsTemplate = jmsTemplate;
     }
 
-    @JmsListener(destination = "${shipping.order-queue}")
+    @JmsListener(destination = "${bookstore.shipping.order-queue}")
     @Async
     public void receiveShippingOrder(Message message) throws JMSException, JsonProcessingException {
         String request = ((TextMessage) message).getText();
@@ -46,7 +46,7 @@ public class ShippingService {
     }
 
 
-    @JmsListener(destination = "${shipping.cancel-queue}")
+    @JmsListener(destination = "${bookstore.shipping.cancel-queue}")
     public void receiveCancellation(TextMessage message) throws JMSException {
         Long orderId = Long.valueOf(message.getText());
         Optional<ShippingInfo> optionalShippingInfo = shippingInfoList.stream().filter(item -> Objects.equals(item.getOrderId(), orderId)).findFirst();

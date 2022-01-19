@@ -16,11 +16,11 @@ public class ShippingServiceIT {
     private JmsTemplate jmsTemplate;
 
 
-    @Value("${shipping.order-queue}")
+    @Value("${bookstore.shipping.order-queue}")
     private String orderQueue;
-    @Value("${shipping.cancel-queue}")
+    @Value("${bookstore.shipping.cancel-queue}")
     private String cancelQueue;
-    @Value("${shipping.info-queue}")
+    @Value("${bookstore.shipping.info-queue}")
     private String infoQueue;
 
 

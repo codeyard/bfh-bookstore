@@ -1,10 +1,7 @@
 package org.bookstore.payment;
 
 import ebay.api.paypalapi.PayPalAPIAAInterface;
-import org.bookstore.payment.dto.Address;
-import org.bookstore.payment.dto.CreditCard;
-import org.bookstore.payment.dto.CreditCardType;
-import org.bookstore.payment.dto.Customer;
+import org.bookstore.payment.dto.*;
 import org.bookstore.payment.exception.PaymentFailedException;
 import org.bookstore.payment.service.PaymentService;
 import org.junit.jupiter.api.Assertions;
@@ -16,14 +13,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @SpringBootTest
 public class PaymentServiceIT {
 
     @Autowired
     private PaymentService paymentService;
-
-    @Autowired
-    private PayPalAPIAAInterface payPalAPIAAInterface;
 
     @Value("${payment.maxAmount}")
     private BigDecimal maxAmount;
@@ -31,31 +27,48 @@ public class PaymentServiceIT {
     @Test
     void makePayment_successful() {
         Customer customer = createCustomer();
+        customer.getCreditCard().setNumber("2221000000000009");
+        customer.getCreditCard().setType(CreditCardType.MASTER_CARD);
+        customer.getCreditCard().setExpirationMonth(12);
+        customer.getCreditCard().setExpirationYear(LocalDate.now().getYear());
 
-        Assertions.assertDoesNotThrow(
-            () -> paymentService.makePayment(customer, customer.getCreditCard(), maxAmount.subtract(BigDecimal.valueOf(1))));
+        Payment payment = Assertions.assertDoesNotThrow(
+                () -> paymentService.makePayment(customer, customer.getCreditCard(), BigDecimal.TEN));
+
+        assertEquals(BigDecimal.TEN, payment.getAmount());
+
     }
 
     @Test
     void makePayment_throwsPaymentFailedExceptionBecauseOfAmount() {
         Customer customer = createCustomer();
+        customer.getCreditCard().setNumber("2221000000000009");
+        customer.getCreditCard().setType(CreditCardType.MASTER_CARD);
+        customer.getCreditCard().setExpirationMonth(12);
+        customer.getCreditCard().setExpirationYear(LocalDate.now().getYear());
+
 
         PaymentFailedException exception = Assertions.assertThrows(PaymentFailedException.class,
-            () -> paymentService.makePayment(customer, customer.getCreditCard(), maxAmount.add(BigDecimal.valueOf(1))));
+                () -> paymentService.makePayment(customer, customer.getCreditCard(), maxAmount));
 
-        Assertions.assertEquals(PaymentFailedException.ErrorCode.AMOUNT_EXCEEDS_LIMIT, exception.getCode());
+        assertEquals("The amount exceeds the maximum amount for a single transaction.", exception.getFaultInfo());
+
+
     }
 
     @Test
     void makePayment_throwsPaymentFailedExceptionBecauseOfExpiredCard() {
         Customer customer = createCustomer();
+        customer.getCreditCard().setNumber("2221000000000009");
+        customer.getCreditCard().setType(CreditCardType.MASTER_CARD);
         customer.getCreditCard().setExpirationYear(LocalDate.now().getYear() - 1);
 
         PaymentFailedException exception = Assertions.assertThrows(PaymentFailedException.class,
-            () -> paymentService.makePayment(customer, customer.getCreditCard(), maxAmount.subtract(BigDecimal.valueOf(1))));
+                () -> paymentService.makePayment(customer, customer.getCreditCard(), new BigDecimal("1000")));
 
 
-        Assertions.assertEquals(PaymentFailedException.ErrorCode.CREDIT_CARD_EXPIRED, exception.getCode());
+        assertEquals("This transaction cannot be processed. Please enter a valid credit card expiration year.", exception.getFaultInfo());
+
     }
 
     @Test
@@ -64,9 +77,9 @@ public class PaymentServiceIT {
         customer.getCreditCard().setNumber("11111");
 
         PaymentFailedException exception = Assertions.assertThrows(PaymentFailedException.class,
-            () -> paymentService.makePayment(customer, customer.getCreditCard(), maxAmount.subtract(BigDecimal.valueOf(1))));
+                () -> paymentService.makePayment(customer, customer.getCreditCard(), maxAmount.subtract(BigDecimal.valueOf(1))));
 
-        Assertions.assertEquals(PaymentFailedException.ErrorCode.INVALID_CREDIT_CARD, exception.getCode());
+        assertEquals("This transaction cannot be processed. Please enter a valid credit card number and type.", exception.getFaultInfo());
     }
 
 

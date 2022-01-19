@@ -22,11 +22,11 @@ public class ShippingClient {
 
     private final OrderRepository orderRepository;
     private final JmsTemplate jmsTemplate;
-    @Value("${shipping.order-queue}")
+    @Value("${bookstore.shipping.order-queue}")
     private String orderQueue;
-    @Value("${shipping.cancel-queue}")
+    @Value("${bookstore.shipping.cancel-queue}")
     private String cancelQueue;
-    @Value("${shipping.info-queue}")
+    @Value("${bookstore.shipping.info-queue}")
     private String infoQueue;
 
     private final EmailService emailService;
@@ -64,7 +64,7 @@ public class ShippingClient {
         });
     }
 
-    @JmsListener(destination = "${shipping.info-queue}")
+    @JmsListener(destination = "${bookstore.shipping.info-queue}")
     public void receiveShippingInfo(Message message) {
         try {
             String content = ((TextMessage) message).getText();

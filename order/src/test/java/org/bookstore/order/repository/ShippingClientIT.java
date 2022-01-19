@@ -23,7 +23,7 @@ public class ShippingClientIT {
     @Autowired
     private JmsTemplate jmsTemplate;
 
-    @Value("${shipping.info-queue}")
+    @Value("${bookstore.shipping.info-queue}")
     private String infoQueue;
 
     @Autowired

@@ -1,21 +1,29 @@
 package org.bookstore.payment.exception;
 
+import javax.xml.ws.WebFault;
+
+@WebFault(name = "PaymentFailedException")
 public class PaymentFailedException extends Exception {
 
-    ErrorCode errorCode;
 
-    public PaymentFailedException(ErrorCode errorCode) {
-        this.errorCode = errorCode;
+//    ErrorCode errorCode;
+
+    public PaymentFailedException(String message) {
+        super(message);
     }
 
-    public ErrorCode getCode() {
-        return errorCode;
+    public String getFaultInfo() {
+        return getMessage();
     }
 
-    public enum ErrorCode {
-        AMOUNT_EXCEEDS_LIMIT,
-        CREDIT_CARD_EXPIRED,
-        INVALID_CREDIT_CARD
-    }
+//    public ErrorCode getCode() {
+//        return errorCode;
+//    }
+//
+//    public enum ErrorCode {
+//        AMOUNT_EXCEEDS_LIMIT,
+//        CREDIT_CARD_EXPIRED,
+//        INVALID_CREDIT_CARD
+//    }
 
 }

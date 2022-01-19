@@ -27,6 +27,7 @@ services:
         environment:
             - POSTGRES_USER=postgres
             - POSTGRES_PASSWORD=postgres
+
         volumes:
             - orderdb:/var/lib/postgresql/data
         ports:
@@ -44,6 +45,11 @@ services:
             - SPRING_ACTIVEMQ_BROKERURL=tcp://activemq:61616
             - BOOKSTORE_CATALOG_APIURL=http://catalog:8001/books
             - BOOKSTORE_PAYMENT_APIURL=http://payment:8003/payments
+            - BOOKSTORE_SHIPPING_ORDERQUEUE=ShippingOrderQueue
+            - BOOKSTORE_SHIPPING_CANCELQUEUE=ShippingCancelQueue
+            - BOOKSTORE_SHIPPING_INFOQUEUE=ShippingInfoQueue
+            - SPRING_MAIL_USERNAME=test584762@gmail.com
+            - SPRING_MAIL_PASSWORD=d1e911EWhJ0hUmAMEVu1
         ports:
             - "8002:8002"
 
@@ -66,6 +72,17 @@ services:
             - activemq
         environment:
             - SPRING_ACTIVEMQ_BROKERURL=tcp://activemq:61616
+            - BOOKSTORE_SHIPPING_ORDERQUEUE=ShippingOrderQueue
+            - BOOKSTORE_SHIPPING_CANCELQUEUE=ShippingCancelQueue
+            - BOOKSTORE_SHIPPING_INFOQUEUE=ShippingInfoQueue
+            - BOOKSTORE_SHIPPING_PROCESSINGTIME=30000
+#            - BOOKSTORE_SHIPPING_MAIL_ENABLED=true
+
+#    mail:
+#        image: rnwood/smtp4dev:v3
+#        ports:
+#            - "3000:80"
+#            - "2525:25"
 
 volumes:
     bookdb: {}
