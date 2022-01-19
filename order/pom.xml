@@ -5,7 +5,7 @@
 
     <groupId>org.bookstore</groupId>
     <artifactId>order</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <name>order</name>
     <description>Order service for Bookstore</description>
 
@@ -90,7 +90,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <image>
-                        <name>order</name>
+                        <name>bookstore1/${project.artifactId}</name>
                     </image>
                 </configuration>
             </plugin>

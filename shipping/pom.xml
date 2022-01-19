@@ -5,7 +5,7 @@
 
 	<groupId>org.bookstore</groupId>
 	<artifactId>shipping</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<name>shipping</name>
 	<description>Shipping service for Bookstore</description>
 
@@ -46,7 +46,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <image>
-                        <name>shipping</name>
+                        <name>bookstore1/${project.artifactId}</name>
                     </image>
                 </configuration>
 			</plugin>

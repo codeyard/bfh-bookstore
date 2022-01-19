@@ -5,7 +5,7 @@
 
     <groupId>org.bookstore</groupId>
     <artifactId>payment</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <name>payment</name>
     <description>Payment service for Bookstore</description>
 
@@ -52,7 +52,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <image>
-                        <name>payment</name>
+                        <name>bookstore1/${project.artifactId}</name>
                     </image>
                 </configuration>
             </plugin>
