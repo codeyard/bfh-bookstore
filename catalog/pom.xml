@@ -81,7 +81,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <image>
-                        <name>bookstore1/${project.artifactId}</name>
+                        <name>${project.artifactId}</name>
                     </image>
                 </configuration>
             </plugin>
