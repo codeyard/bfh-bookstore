@@ -1,13 +1,13 @@
 package org.bookstore.catalog.service;
 
+import org.bookstore.catalog.adapter.GoogleBooksClient;
 import org.bookstore.catalog.entity.Book;
 import org.bookstore.catalog.exception.BookAlreadyExistsException;
 import org.bookstore.catalog.exception.BookNotFoundException;
 import org.bookstore.catalog.repository.BookRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * The interface CatalogService defines a service to manage the books of a bookstore.
@@ -19,10 +19,13 @@ public class CatalogService {
 
     private final BookRepository bookRepository;
 
-    @Autowired
-    public CatalogService(BookRepository bookRepository) {
+    private final GoogleBooksClient googleBooksClient;
+
+    public CatalogService(BookRepository bookRepository, GoogleBooksClient googleBooksClient) {
         this.bookRepository = bookRepository;
+        this.googleBooksClient = googleBooksClient;
     }
+
 
     /**
      * Adds a book to the catalog.
@@ -48,7 +51,15 @@ public class CatalogService {
      * @throws BookNotFoundException - if no book with the specified ISBN exists
      */
     public Book findBook(String isbn) throws BookNotFoundException {
-        return bookRepository.findBookByIsbn(isbn).orElseThrow(BookNotFoundException::new);
+        Optional<Book> bookFromReposiroty = bookRepository.findBookByIsbn(isbn);
+        if (bookFromReposiroty.isPresent())
+            return bookFromReposiroty.get();
+
+        Optional<Book> bookFromGoogle = googleBooksClient.listVolume(isbn);
+        if (bookFromGoogle.isPresent())
+            return bookFromGoogle.get();
+
+        throw new BookNotFoundException();
     }
 
     /**
@@ -59,7 +70,22 @@ public class CatalogService {
      * @return the list of matching books (may be empty)
      */
     public List<Book> searchBooks(String keywords) {
-        return bookRepository.findBooksByKeywords(keywords.split(" "));
+        Map<String, Book> combinedBooks = new HashMap<>();
+        List<Book> booksFromRepository = bookRepository.findBooksByKeywords(keywords.split(" "));
+
+        booksFromRepository.forEach(book -> {
+            combinedBooks.put(book.getIsbn(), book);
+        });
+
+        Optional<List<Book>> booksFromGoogle = googleBooksClient.listVolumes(keywords);
+        booksFromGoogle.ifPresent(googleBooks -> {
+            googleBooks.forEach(googleBook -> {
+                combinedBooks.put(googleBook.getIsbn(), googleBook);
+            });
+        });
+
+        return new ArrayList<>(combinedBooks.values());
+
     }
 
     /**

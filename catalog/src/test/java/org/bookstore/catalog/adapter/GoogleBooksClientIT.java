@@ -10,8 +10,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RunWith(SpringRunner.class)
 @RestClientTest(GoogleBooksClient.class)
@@ -22,16 +24,31 @@ class GoogleBooksClientIT {
 
     @Test
     void listVolume() throws BookNotFoundException {
-        Book book = googleBooksClient.listVolume("9783954408665");
-        assertEquals("Flower Power Letterings", book.getTitle());
-        assertEquals(2020, book.getPublicationYear());
-        assertEquals("Patrycja Woltman", book.getAuthors());
-        assertEquals(new BigDecimal("6.50").stripTrailingZeros(), book.getPrice().stripTrailingZeros());
+        Optional<Book> book = googleBooksClient.listVolume("9783954408665");
+
+        book.ifPresent(book1 -> {
+            assertEquals("Flower Power Letterings", book1.getTitle());
+            assertEquals(2020, book1.getPublicationYear());
+            assertEquals("Patrycja Woltman", book1.getAuthors());
+            assertEquals(new BigDecimal("6.50").stripTrailingZeros(), book1.getPrice().stripTrailingZeros());
+        });
+
     }
 
     @Test
     void listVolumes() {
-        List<Book> bookList = googleBooksClient.listVolumes("spring boot");
-        assertEquals(27, bookList.size());
+        Optional<List<Book>> bookList = googleBooksClient.listVolumes("spring boot");
+
+        bookList.ifPresent(books -> {
+            assertTrue(books.size() > 0);
+            books.forEach(book -> {
+                assertTrue(book.getTitle() != null);
+                assertTrue(book.getIsbn() != null);
+                assertTrue(book.getAuthors() != null);
+                assertTrue(book.getPrice() != null);
+                assertTrue(book.getPublisher() != null);
+            });
+        });
+
     }
 }

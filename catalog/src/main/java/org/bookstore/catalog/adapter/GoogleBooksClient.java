@@ -9,6 +9,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GoogleBooksClient {
@@ -21,9 +22,9 @@ public class GoogleBooksClient {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public Book listVolume(String isbn) throws BookNotFoundException {
+    public Optional<Book> listVolume(String isbn) throws BookNotFoundException {
         Volumes volumes = restTemplate.getForObject(baseUrl + "isbn:" + isbn, Volumes.class);
-        Book book;
+        Optional<Book> book;
         if (volumes != null && volumes.totalItems() > 0) {
             book = VolumesConverter.convertToBook(volumes.items().get(0));
             return book;
@@ -31,10 +32,10 @@ public class GoogleBooksClient {
         throw new BookNotFoundException();
     }
 
-    public List<Book> listVolumes(String searchTerms) {
+    public Optional<List<Book>> listVolumes(String searchTerms) {
         Volumes volumes = restTemplate.getForObject(baseUrl + searchTerms + "&maxResults=" + maxResults, Volumes.class);
         if (volumes == null) {
-            return new ArrayList<>();
+            return Optional.empty();
         }
         return VolumesConverter.convertToBookList(volumes);
     }
