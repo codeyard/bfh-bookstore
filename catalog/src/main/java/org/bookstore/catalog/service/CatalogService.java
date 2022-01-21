@@ -51,9 +51,9 @@ public class CatalogService {
      * @throws BookNotFoundException - if no book with the specified ISBN exists
      */
     public Book findBook(String isbn) throws BookNotFoundException {
-        Optional<Book> bookFromReposiroty = bookRepository.findBookByIsbn(isbn);
-        if (bookFromReposiroty.isPresent())
-            return bookFromReposiroty.get();
+        Optional<Book> bookFromRepository = bookRepository.findBookByIsbn(isbn);
+        if (bookFromRepository.isPresent())
+            return bookFromRepository.get();
 
         Optional<Book> bookFromGoogle = googleBooksClient.listVolume(isbn);
         if (bookFromGoogle.isPresent())

@@ -37,19 +37,18 @@ public class VolumesConverter {
         if (volumes.totalItems() > 0) {
             for (Volume volume : volumes.items()) {
                 Optional<Book> book = convertToBook(volume);
-                book.ifPresent(bookToAd -> bookList.add(bookToAd));
-                }
+                book.ifPresent(bookList::add);
             }
+        }
         return Optional.of(bookList);
     }
 
     private static boolean isBook(Volume volume) {
         return !volume.saleInfo().saleability().equals("NOT_FOR_SALE") &&
-                volume.volumeInfo().industryIdentifiers() != null &&
-                volume.volumeInfo().title() != null &&
-                volume.volumeInfo().authors() != null &&
-                volume.volumeInfo().publisher() != null &&
-                volume.saleInfo().listPrice().amount() != null;
+            volume.volumeInfo().industryIdentifiers() != null &&
+            volume.volumeInfo().title() != null &&
+            volume.volumeInfo().authors() != null &&
+            volume.volumeInfo().publisher() != null &&
+            volume.saleInfo().listPrice().amount() != null;
     }
-
 }

@@ -12,8 +12,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @RestClientTest(GoogleBooksClient.class)
@@ -42,11 +41,11 @@ class GoogleBooksClientIT {
         bookList.ifPresent(books -> {
             assertTrue(books.size() > 0);
             books.forEach(book -> {
-                assertTrue(book.getTitle() != null);
-                assertTrue(book.getIsbn() != null);
-                assertTrue(book.getAuthors() != null);
-                assertTrue(book.getPrice() != null);
-                assertTrue(book.getPublisher() != null);
+                assertNotNull(book.getTitle());
+                assertNotNull(book.getIsbn());
+                assertNotNull(book.getAuthors());
+                assertNotNull(book.getPrice());
+                assertNotNull(book.getPublisher());
             });
         });
 
