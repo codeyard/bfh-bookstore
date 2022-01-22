@@ -1,5 +1,6 @@
 package org.bookstore.catalog.util;
 
+import org.bookstore.catalog.adapter.Identifier;
 import org.bookstore.catalog.adapter.Volume;
 import org.bookstore.catalog.adapter.Volumes;
 import org.bookstore.catalog.entity.Book;
@@ -12,9 +13,10 @@ import java.util.Optional;
 public class VolumesConverter {
 
     public static Optional<Book> convertToBook(Volume volume) {
+
         if (isBook(volume)) {
             Book book = new Book();
-            book.setIsbn(volume.volumeInfo().industryIdentifiers().get(0).identifier());
+            book.setIsbn(extractIsbn10(volume));
             book.setTitle(volume.volumeInfo().title());
             book.setSubtitle(volume.volumeInfo().subTitle());
             book.setAuthors(String.join(",", volume.volumeInfo().authors()));
@@ -45,10 +47,17 @@ public class VolumesConverter {
 
     private static boolean isBook(Volume volume) {
         return !volume.saleInfo().saleability().equals("NOT_FOR_SALE") &&
-            volume.volumeInfo().industryIdentifiers() != null &&
-            volume.volumeInfo().title() != null &&
-            volume.volumeInfo().authors() != null &&
-            volume.volumeInfo().publisher() != null &&
-            volume.saleInfo().listPrice().amount() != null;
+                volume.volumeInfo().industryIdentifiers() != null &&
+                volume.volumeInfo().title() != null &&
+                volume.volumeInfo().authors() != null &&
+                volume.volumeInfo().publisher() != null &&
+                volume.saleInfo().listPrice().amount() != null &&
+                extractIsbn10(volume) != null;
+    }
+
+    private static String extractIsbn10(Volume volume) {
+        Optional<Identifier> bookWithIsbn10 = volume.volumeInfo().industryIdentifiers().stream().filter(identifier -> identifier.type().equals("ISBN_10")).findAny();
+        return bookWithIsbn10.map(Identifier::identifier).orElse(null);
+
     }
 }

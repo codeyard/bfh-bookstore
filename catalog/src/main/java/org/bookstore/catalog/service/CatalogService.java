@@ -59,7 +59,7 @@ public class CatalogService {
         if (bookFromGoogle.isPresent())
             return bookFromGoogle.get();
 
-        throw new BookNotFoundException();
+        throw new BookNotFoundException("Book with ISBN " + isbn + " not found");
     }
 
     /**
@@ -100,7 +100,7 @@ public class CatalogService {
         if (bookExists) {
             return bookRepository.saveAndFlush(book);
         } else {
-            throw new BookNotFoundException();
+            throw new BookNotFoundException("Book with ISBN " + book.getIsbn() + " not found");
         }
     }
 }
