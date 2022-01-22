@@ -39,7 +39,7 @@ public class CatalogService {
         if (!bookExists) {
             return bookRepository.saveAndFlush(book);
         } else {
-            throw new BookAlreadyExistsException();
+            throw new BookAlreadyExistsException(book.getIsbn());
         }
     }
 
@@ -59,7 +59,7 @@ public class CatalogService {
         if (bookFromGoogle.isPresent())
             return bookFromGoogle.get();
 
-        throw new BookNotFoundException("Book with ISBN " + isbn + " not found");
+        throw new BookNotFoundException(isbn);
     }
 
     /**
@@ -73,16 +73,10 @@ public class CatalogService {
         Map<String, Book> combinedBooks = new HashMap<>();
         List<Book> booksFromRepository = bookRepository.findBooksByKeywords(keywords.split(" "));
 
-        booksFromRepository.forEach(book -> {
-            combinedBooks.put(book.getIsbn(), book);
-        });
+        booksFromRepository.forEach(book -> combinedBooks.put(book.getIsbn(), book));
 
         Optional<List<Book>> booksFromGoogle = googleBooksClient.listVolumes(keywords);
-        booksFromGoogle.ifPresent(googleBooks -> {
-            googleBooks.forEach(googleBook -> {
-                combinedBooks.put(googleBook.getIsbn(), googleBook);
-            });
-        });
+        booksFromGoogle.ifPresent(googleBooks -> googleBooks.forEach(googleBook -> combinedBooks.put(googleBook.getIsbn(), googleBook)));
 
         return new ArrayList<>(combinedBooks.values());
 
@@ -100,7 +94,7 @@ public class CatalogService {
         if (bookExists) {
             return bookRepository.saveAndFlush(book);
         } else {
-            throw new BookNotFoundException("Book with ISBN " + book.getIsbn() + " not found");
+            throw new BookNotFoundException(book.getIsbn());
         }
     }
 }

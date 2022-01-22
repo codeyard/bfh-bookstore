@@ -29,7 +29,7 @@ public class GoogleBooksClient {
             book = VolumesConverter.convertToBook(volumes.items().get(0));
             return book;
         }
-        throw new BookNotFoundException("Book with ISBN " + isbn + " not found");
+        throw new BookNotFoundException(isbn);
     }
 
     public Optional<List<Book>> listVolumes(String searchTerms) {

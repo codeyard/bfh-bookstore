@@ -19,26 +19,26 @@ public class CatalogController {
         this.catalogService = catalogService;
     }
 
-    @GetMapping("/{isbn}")
+    @GetMapping(value = "/{isbn}", produces = "application/json")
     public Book getBook(@PathVariable String isbn) throws BookNotFoundException {
         return catalogService.findBook(isbn);
     }
 
-    @GetMapping(params = "keywords")
+    @GetMapping(params = "keywords", produces = "application/json")
     public List<Book> findBooks(@RequestParam String keywords) {
         return catalogService.searchBooks(keywords);
     }
 
-    @PostMapping(consumes = "application/json")
+    @PostMapping(consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addBook(@RequestBody Book book) throws BookAlreadyExistsException {
-        catalogService.addBook(book);
+    public Book addBook(@RequestBody Book book) throws BookAlreadyExistsException {
+        return catalogService.addBook(book);
     }
 
-    @PutMapping("/{isbn}")
+    @PutMapping(value = "/{isbn}", produces = "application/json")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateBook(@RequestBody Book book) throws BookNotFoundException {
-        catalogService.updateBook(book);
+    public Book updateBook(@RequestBody Book book) throws BookNotFoundException {
+        return catalogService.updateBook(book);
     }
 
 
