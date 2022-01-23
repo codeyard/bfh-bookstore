@@ -56,8 +56,10 @@ public class CatalogService {
             return bookFromRepository.get();
 
         Optional<Book> bookFromGoogle = googleBooksClient.listVolume(isbn);
-        if (bookFromGoogle.isPresent())
+        if (bookFromGoogle.isPresent()) {
+            bookRepository.saveAndFlush(bookFromGoogle.get());
             return bookFromGoogle.get();
+        }
 
         throw new BookNotFoundException(isbn);
     }
