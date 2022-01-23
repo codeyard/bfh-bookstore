@@ -12,9 +12,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertTrue;
+
 
 @SpringBootTest
 public class CatalogServiceIT {
@@ -95,6 +98,29 @@ public class CatalogServiceIT {
         Assertions.assertThrows(BookAlreadyExistsException.class, () -> catalogService.addBook(book));
     }
 
+    @Test
+    void findBook_savesBookFromGoogle_successful() {
+        String isbn = "3423438657";
+
+        Assertions.assertDoesNotThrow(() -> catalogService.findBook(isbn));
+        Assertions.assertTrue(bookRepository.existsByIsbn(isbn));
+        Optional<Book> bookByIsbn = bookRepository.findBookByIsbn(isbn);
+        assertTrue(bookByIsbn.isPresent());
+        bookByIsbn.ifPresent(book1 -> {
+            Assertions.assertEquals("Ein anderes Land", book1.getTitle());
+            Assertions.assertEquals("James Baldwin", book1.getAuthors());
+            Assertions.assertEquals("Deutscher Taschenbuch Verlag", book1.getPublisher());
+            Assertions.assertEquals(new BigDecimal("22.00"), book1.getPrice());
+        });
+    }
+
+    @Test
+    void searchBooks_DeliversNoDuplicates_successful() {
+        List<Book> harry_potter = catalogService.searchBooks("harry potter");
+
+        Map<String, Long> collect = harry_potter.stream().collect(Collectors.groupingBy(Book::getIsbn, Collectors.counting()));
+        Assertions.assertTrue(collect.get("3959713983").equals(1L));
+    }
 
     private Book createBook() {
         Book book = new Book();
@@ -109,5 +135,6 @@ public class CatalogServiceIT {
         book.setImageUrl("https://www.amazingdevs.com/theMining");
         return book;
     }
+
 
 }
