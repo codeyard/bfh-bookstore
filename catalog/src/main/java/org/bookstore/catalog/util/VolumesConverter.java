@@ -5,7 +5,6 @@ import org.bookstore.catalog.adapter.Volume;
 import org.bookstore.catalog.adapter.Volumes;
 import org.bookstore.catalog.entity.Book;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +22,7 @@ public class VolumesConverter {
             book.setPublisher(volume.volumeInfo().publisher());
             book.setPrice(volume.saleInfo().listPrice().amount());
             if (volume.volumeInfo().publishedDate() != null) {
-                book.setPublicationYear(LocalDate.parse(volume.volumeInfo().publishedDate()).getYear());
+                book.setPublicationYear(Integer.parseInt(volume.volumeInfo().publishedDate().split("-")[0]));
             }
             book.setNumberOfPages(volume.volumeInfo().pageCount());
             book.setDescription(volume.volumeInfo().description());
@@ -47,12 +46,12 @@ public class VolumesConverter {
 
     private static boolean isBook(Volume volume) {
         return !volume.saleInfo().saleability().equals("NOT_FOR_SALE") &&
-                volume.volumeInfo().industryIdentifiers() != null &&
-                volume.volumeInfo().title() != null &&
-                volume.volumeInfo().authors() != null &&
-                volume.volumeInfo().publisher() != null &&
-                volume.saleInfo().listPrice().amount() != null &&
-                extractIsbn10(volume) != null;
+            volume.volumeInfo().industryIdentifiers() != null &&
+            volume.volumeInfo().title() != null &&
+            volume.volumeInfo().authors() != null &&
+            volume.volumeInfo().publisher() != null &&
+            volume.saleInfo().listPrice().amount() != null &&
+            extractIsbn10(volume) != null;
     }
 
     private static String extractIsbn10(Volume volume) {

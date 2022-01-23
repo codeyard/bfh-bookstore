@@ -15,8 +15,6 @@ import static javax.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
 @Configuration
 public class PayPalServiceConfig {
 
-    // TODO CHECK WHY VALUE INJECTION DOES NOT WORK
-
     @Value("${bookstore.paypal.wsdlurl}")
     private String wsdlUrl;
     @Value("${bookstore.paypal.endpoint}")

@@ -4,14 +4,13 @@ import org.bookstore.catalog.entity.Book;
 import org.bookstore.catalog.exception.BookNotFoundException;
 import org.bookstore.catalog.util.VolumesConverter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Component
 public class GoogleBooksClient {
 
     @Value("${google.books.api-url}")
