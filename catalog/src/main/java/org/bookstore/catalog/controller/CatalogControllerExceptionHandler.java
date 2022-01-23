@@ -28,7 +28,7 @@ public class CatalogControllerExceptionHandler extends ResponseEntityExceptionHa
             message.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(message, message.getStatus());
 
     }
 
