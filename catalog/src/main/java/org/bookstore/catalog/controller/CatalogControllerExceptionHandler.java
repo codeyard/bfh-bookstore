@@ -52,16 +52,16 @@ public class CatalogControllerExceptionHandler extends ResponseEntityExceptionHa
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ErrorInfo message = new ErrorInfo(ex.getFieldError().getDefaultMessage(),
-            ((ServletWebRequest) request).getRequest().getRequestURI());
+        ((ServletWebRequest)request).getRequest().getRequestURI());
         message.setStatus(HttpStatus.valueOf(HttpStatus.BAD_REQUEST.value()));
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = {ConstraintViolationException.class})
-    public ResponseEntity<Object> handleConstraint(ConstraintViolationException ex,
-                                                   WebRequest request) {
+    public  ResponseEntity<Object> handleConstraint(ConstraintViolationException ex,
+                                                    WebRequest request ) {
         ErrorInfo message = new ErrorInfo(ex.getMessage(),
-            ((ServletWebRequest) request).getRequest().getRequestURI());
+                ((ServletWebRequest)request).getRequest().getRequestURI());
         message.setStatus(HttpStatus.valueOf(HttpStatus.BAD_REQUEST.value()));
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }

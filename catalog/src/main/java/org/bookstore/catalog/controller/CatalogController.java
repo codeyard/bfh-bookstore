@@ -47,7 +47,8 @@ public class CatalogController {
 
     @PutMapping(value = "/{isbn}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public Book updateBook(@PathVariable String isbn, @RequestBody @Valid Book book) throws BookNotFoundException, IsbnNotMatchingException {
+    public Book updateBook(@PathVariable
+                           @Pattern(regexp = isbnRegex, message = "ISBN is not valid") String isbn, @RequestBody @Valid Book book) throws BookNotFoundException, IsbnNotMatchingException {
         if (!book.getIsbn().equals(isbn))
             throw new IsbnNotMatchingException();
         return catalogService.updateBook(book);
