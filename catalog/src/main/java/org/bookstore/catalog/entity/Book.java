@@ -1,7 +1,6 @@
 package org.bookstore.catalog.entity;
 
 import com.sun.istack.NotNull;
-import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -17,7 +16,6 @@ public class Book {
     private String isbn;
     @NotNull
     @NotBlank(message = "Missing book title")
-    @Size(min = 3)
     private String title;
     private String subtitle;
     @NotNull
