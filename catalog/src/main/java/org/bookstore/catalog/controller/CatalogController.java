@@ -21,14 +21,16 @@ public class CatalogController {
 
     private final CatalogService catalogService;
 
+    private final String isbnRegex = "^(?:ISBN(?:-10)?:? )?(?=[0-9X]{10}$|(?=(?:[0-9]+[- ]){3})[- 0-9X]{13}$)[0-9]{1,5}[- ]?[0-9]+[- ]?[0-9]+[- ]?[0-9X]$";
+
     public CatalogController(CatalogService catalogService) {
         this.catalogService = catalogService;
     }
 
     @GetMapping(value = "/{isbn}", produces = "application/json")
     public Book getBook(
-            @PathVariable
-            @Pattern(regexp="^[0-9]{10}", message="length must be 10")  String isbn) throws BookNotFoundException {
+        @PathVariable
+        @Pattern(regexp = isbnRegex, message = "ISBN is not valid") String isbn) throws BookNotFoundException {
         return catalogService.findBook(isbn);
     }
 
@@ -46,7 +48,7 @@ public class CatalogController {
     @PutMapping(value = "/{isbn}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     public Book updateBook(@PathVariable String isbn, @RequestBody @Valid Book book) throws BookNotFoundException, IsbnNotMatchingException {
-        if(!book.getIsbn().equals(isbn))
+        if (!book.getIsbn().equals(isbn))
             throw new IsbnNotMatchingException();
         return catalogService.updateBook(book);
     }
