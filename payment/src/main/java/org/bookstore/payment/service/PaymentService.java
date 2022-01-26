@@ -33,6 +33,7 @@ public class PaymentService {
             for (ErrorType errorType : doDirectPaymentResponseType.getErrors()) {
                 switch (errorType.getErrorCode()) {
                     // https://developer.paypal.com/api/nvp-soap/errors/
+                    case "10563" -> throw new PaymentFailedException(errorType.getLongMessage());
                     case "10527" -> throw new PaymentFailedException(errorType.getLongMessage());
                     case "10562" -> throw new PaymentFailedException(errorType.getLongMessage());
                     case "10553" -> throw new PaymentFailedException(errorType.getLongMessage());

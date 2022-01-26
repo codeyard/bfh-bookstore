@@ -1,15 +1,13 @@
 package org.bookstore.payment.dto;
 
+import javax.validation.constraints.NotNull;
+
 public class Customer {
 
-    private Long id;
-
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String username;
-    private Address address;
-    private CreditCard creditCard;
+    @NotNull(message = "Missing customer id") private Long id;
+    @NotNull(message = "Missing first name") private String firstName;
+    @NotNull(message = "Missing last name") private String lastName;
+    @NotNull(message = "Missing email") private String email;
 
 
     // <editor-fold desc="Getter and Setter">
@@ -44,30 +42,6 @@ public class Customer {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
-    public CreditCard getCreditCard() {
-        return creditCard;
-    }
-
-    public void setCreditCard(CreditCard creditCard) {
-        this.creditCard = creditCard;
     }
 
     // </editor-fold>

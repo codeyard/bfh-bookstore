@@ -1,6 +1,5 @@
 package org.bookstore.payment;
 
-import ebay.api.paypalapi.PayPalAPIAAInterface;
 import org.bookstore.payment.dto.*;
 import org.bookstore.payment.exception.PaymentFailedException;
 import org.bookstore.payment.service.PaymentService;
@@ -27,13 +26,14 @@ public class PaymentServiceIT {
     @Test
     void makePayment_successful() {
         Customer customer = createCustomer();
-        customer.getCreditCard().setNumber("2221000000000009");
-        customer.getCreditCard().setType(CreditCardType.MASTER_CARD);
-        customer.getCreditCard().setExpirationMonth(12);
-        customer.getCreditCard().setExpirationYear(LocalDate.now().getYear());
+        CreditCard creditCard = new CreditCard();
+        creditCard.setNumber("2221000000000009");
+        creditCard.setType(CreditCardType.MASTER_CARD);
+        creditCard.setExpirationMonth(12);
+        creditCard.setExpirationYear(LocalDate.now().getYear());
 
         Payment payment = Assertions.assertDoesNotThrow(
-                () -> paymentService.makePayment(customer, customer.getCreditCard(), BigDecimal.TEN));
+            () -> paymentService.makePayment(customer, creditCard, BigDecimal.TEN));
 
         assertEquals(BigDecimal.TEN, payment.getAmount());
 
@@ -42,14 +42,15 @@ public class PaymentServiceIT {
     @Test
     void makePayment_throwsPaymentFailedExceptionBecauseOfAmount() {
         Customer customer = createCustomer();
-        customer.getCreditCard().setNumber("2221000000000009");
-        customer.getCreditCard().setType(CreditCardType.MASTER_CARD);
-        customer.getCreditCard().setExpirationMonth(12);
-        customer.getCreditCard().setExpirationYear(LocalDate.now().getYear());
+        CreditCard creditCard = new CreditCard();
+        creditCard.setNumber("2221000000000009");
+        creditCard.setType(CreditCardType.MASTER_CARD);
+        creditCard.setExpirationMonth(12);
+        creditCard.setExpirationYear(LocalDate.now().getYear());
 
 
         PaymentFailedException exception = Assertions.assertThrows(PaymentFailedException.class,
-                () -> paymentService.makePayment(customer, customer.getCreditCard(), maxAmount));
+            () -> paymentService.makePayment(customer, creditCard, maxAmount));
 
         assertEquals("The amount exceeds the maximum amount for a single transaction.", exception.getFaultInfo());
 
@@ -59,12 +60,14 @@ public class PaymentServiceIT {
     @Test
     void makePayment_throwsPaymentFailedExceptionBecauseOfExpiredCard() {
         Customer customer = createCustomer();
-        customer.getCreditCard().setNumber("2221000000000009");
-        customer.getCreditCard().setType(CreditCardType.MASTER_CARD);
-        customer.getCreditCard().setExpirationYear(LocalDate.now().getYear() - 1);
+        CreditCard creditCard = new CreditCard();
+        creditCard.setNumber("2221000000000009");
+        creditCard.setType(CreditCardType.MASTER_CARD);
+        creditCard.setExpirationMonth(1);
+        creditCard.setExpirationYear(LocalDate.now().getYear() - 1);
 
         PaymentFailedException exception = Assertions.assertThrows(PaymentFailedException.class,
-                () -> paymentService.makePayment(customer, customer.getCreditCard(), new BigDecimal("1000")));
+            () -> paymentService.makePayment(customer, creditCard, new BigDecimal("1000")));
 
 
         assertEquals("This transaction cannot be processed. Please enter a valid credit card expiration year.", exception.getFaultInfo());
@@ -74,10 +77,13 @@ public class PaymentServiceIT {
     @Test
     void makePayment_throwsPaymentFailedExceptionBecauseOfInvalidCardNumber() {
         Customer customer = createCustomer();
-        customer.getCreditCard().setNumber("11111");
+        CreditCard creditCard = new CreditCard();
+        creditCard.setNumber("11111");
+        creditCard.setType(CreditCardType.VISA);
+        creditCard.setExpirationYear(LocalDate.now().getYear() + 1);
 
         PaymentFailedException exception = Assertions.assertThrows(PaymentFailedException.class,
-                () -> paymentService.makePayment(customer, customer.getCreditCard(), maxAmount.subtract(BigDecimal.valueOf(1))));
+            () -> paymentService.makePayment(customer, creditCard, maxAmount.subtract(BigDecimal.valueOf(1))));
 
         assertEquals("This transaction cannot be processed. Please enter a valid credit card number and type.", exception.getFaultInfo());
     }
@@ -86,25 +92,15 @@ public class PaymentServiceIT {
     private Customer createCustomer() {
         Customer customer = new Customer();
 
-        Address address = new Address();
-        address.setStreet("McLarens Pub");
-        address.setPostalCode("80008");
-        address.setCity("New York");
-        address.setCountry("USA");
-        address.setStateProvince("NY");
-
         CreditCard creditCard = new CreditCard();
         creditCard.setExpirationYear(LocalDate.now().getYear() + 1);
         creditCard.setExpirationMonth(12);
         creditCard.setType(CreditCardType.MASTER_CARD);
         creditCard.setNumber("54001105080960");
 
-        customer.setAddress(address);
-        customer.setCreditCard(creditCard);
         customer.setEmail("test@test.ch");
         customer.setFirstName("Barney");
         customer.setLastName("Stinson");
-        customer.setUsername("barnebous");
         customer.setId(10000L);
 
         return customer;

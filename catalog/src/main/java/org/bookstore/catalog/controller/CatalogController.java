@@ -14,6 +14,8 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import java.util.List;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 @RequestMapping("/books")
 @Validated
@@ -27,25 +29,25 @@ public class CatalogController {
         this.catalogService = catalogService;
     }
 
-    @GetMapping(value = "/{isbn}", produces = "application/json")
+    @GetMapping(value = "/{isbn}", produces = APPLICATION_JSON_VALUE)
     public Book getBook(
         @PathVariable
         @Pattern(regexp = isbnRegex, message = "ISBN is not valid") String isbn) throws BookNotFoundException {
         return catalogService.findBook(isbn);
     }
 
-    @GetMapping(params = "keywords", produces = "application/json")
+    @GetMapping(params = "keywords", produces = APPLICATION_JSON_VALUE)
     public List<Book> findBooks(@RequestParam @NotEmpty String keywords) {
         return catalogService.searchBooks(keywords);
     }
 
-    @PostMapping(consumes = "application/json", produces = "application/json")
+    @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public Book addBook(@RequestBody @Valid Book book) throws BookAlreadyExistsException {
         return catalogService.addBook(book);
     }
 
-    @PutMapping(value = "/{isbn}", produces = "application/json")
+    @PutMapping(value = "/{isbn}", produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public Book updateBook(@PathVariable
                            @Pattern(regexp = isbnRegex, message = "ISBN is not valid") String isbn, @RequestBody @Valid Book book) throws BookNotFoundException, IsbnNotMatchingException {

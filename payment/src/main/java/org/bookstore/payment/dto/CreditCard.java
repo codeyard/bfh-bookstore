@@ -1,11 +1,13 @@
 package org.bookstore.payment.dto;
 
+import javax.validation.constraints.NotNull;
+
 public class CreditCard {
 
-    private CreditCardType type;
-    private String number;
-    private Integer expirationMonth;
-    private Integer expirationYear;
+    @NotNull(message = "Missing credit card type") private CreditCardType type;
+    @NotNull(message = "Missing credit card number") private String number;
+    @NotNull(message = "Missing expiration month") private Integer expirationMonth;
+    @NotNull(message = "Missing expiration year") private Integer expirationYear;
 
 
     //<editor-fold desc="Getter and Setter">

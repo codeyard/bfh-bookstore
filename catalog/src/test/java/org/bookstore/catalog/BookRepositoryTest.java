@@ -25,14 +25,14 @@ public class BookRepositoryTest {
     // Query 3: Find the Book by a specific ISBN-Number
     @Test
     void findByIsbn_foundOne() {
-        Optional<Book> book = bookRepository.findBookByIsbn("978-3-404-13089-4");
+        Optional<Book> book = bookRepository.findBookByIsbn("3404130898");
         assertTrue(book.isPresent());
         assertEquals("Shining", book.get().getTitle());
     }
 
     @Test
     void findByIsbn_foundNone() {
-        Optional<Book> book = bookRepository.findBookByIsbn("978-3-404555244");
+        Optional<Book> book = bookRepository.findBookByIsbn("1111111111");
         assertFalse(book.isPresent());
     }
 
@@ -52,13 +52,13 @@ public class BookRepositoryTest {
 
     @Test
     void bookExists_FoundOne() {
-        boolean existsByIsbn = bookRepository.existsByIsbn("978-3-404-13089-4");
+        boolean existsByIsbn = bookRepository.existsByIsbn("3404130898");
         assertTrue(existsByIsbn);
     }
 
     @Test
     void bookExists_FoundNone() {
-        boolean existsByIsbn = bookRepository.existsByIsbn("978-1-111-1111-4");
+        boolean existsByIsbn = bookRepository.existsByIsbn("1111111111");
         assertFalse(existsByIsbn);
     }
 }

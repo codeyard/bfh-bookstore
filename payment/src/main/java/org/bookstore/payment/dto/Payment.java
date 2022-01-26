@@ -5,8 +5,6 @@ import java.time.LocalDateTime;
 
 public class Payment {
 
-
-    private Long id;
     private LocalDateTime date;
     private BigDecimal amount;
     private String creditCardNumber;
@@ -15,14 +13,6 @@ public class Payment {
     // TODO Add Order entity? (as according to API documentation)
 
     // <editor-fold desc="Getter and Setter">
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public LocalDateTime getDate() {
         return date;
