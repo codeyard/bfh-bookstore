@@ -1,6 +1,7 @@
 package org.bookstore.catalog.controller;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
@@ -9,10 +10,11 @@ public class ErrorInfo {
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Europe/Zagreb")
     private LocalDateTime timestamp;
-    private HttpStatus status;
+    private int status;
     private String error;
     private String message;
     private String path;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private ErrorCode code;
 
     public ErrorInfo() {
@@ -34,13 +36,13 @@ public class ErrorInfo {
         this.timestamp = timestamp;
     }
 
-    public HttpStatus getStatus() {
+    public int getStatus() {
         return status;
     }
 
     public void setStatus(HttpStatus status) {
         this.error = status.getReasonPhrase();
-        this.status = status;
+        this.status = status.value();
     }
 
     public String getError() {

@@ -1,9 +1,12 @@
 package org.bookstore.catalog.entity;
 
 import com.sun.istack.NotNull;
+import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
 @Entity
@@ -13,12 +16,15 @@ public class Book {
     @NotNull
     private String isbn;
     @NotNull
+    @NotBlank(message = "Missing book title")
+    @Size(min = 3)
     private String title;
-
     private String subtitle;
     @NotNull
+    @NotBlank(message = "Authors is mandatory")
     private String authors;
     @NotNull
+    @NotBlank(message = "Publisher is mandatory")
     private String publisher;
     private Integer publicationYear;
     private Integer numberOfPages;
