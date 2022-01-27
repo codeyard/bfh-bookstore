@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -43,9 +44,9 @@ class CatalogControllerIT {
                 .extract()
                 .as(Book.class);
 
-        assertThat(receivedBook.getIsbn().equals("395440866X"));
-        assertThat(receivedBook.getTitle().equals("Flower Power Letterings"));
-        assertThat(receivedBook.getSubtitle() == null);
+        assertThat(receivedBook.getIsbn().equals("395440866X")).isTrue();
+        assertThat(receivedBook.getTitle().equals("Flower Power Letterings")).isTrue();
+        assertThat(receivedBook.getSubtitle() == null).isTrue();
 
     }
 
@@ -94,14 +95,14 @@ class CatalogControllerIT {
 
         List<Book> list = new ArrayList(Arrays.asList(booksFound));
 
-        assertThat(list.size() > 0);
+        assertThat(list.size() > 0).isTrue();
 
         list.forEach(book -> {
-            assertThat(book.getIsbn() != null);
-            assertThat(book.getTitle() != null);
-            assertThat(book.getAuthors() != null);
-            assertThat(book.getPublisher() != null);
-            assertThat(book.getPrice() != null);
+            assertThat(book.getIsbn() != null).isTrue();
+            assertThat(book.getTitle() != null).isTrue();
+            assertThat(book.getAuthors() != null).isTrue();
+            assertThat(book.getPublisher() != null).isTrue();
+            assertThat(book.getPrice() != null).isTrue();
         });
 
     }
@@ -136,16 +137,16 @@ class CatalogControllerIT {
                 .extract()
                 .as(Book.class);
 
-        assertThat(savedBook.getIsbn().equals(requestParams.get("isbn")));
-        assertThat(savedBook.getTitle().equals(requestParams.get("title")));
-        assertThat(savedBook.getAuthors().equals(requestParams.get("authors")));
-        assertThat(savedBook.getPublisher().equals(requestParams.get("publisher")));
-        assertThat(savedBook.getPublicationYear().equals(requestParams.get("publicationYear")));
-        assertThat(savedBook.getNumberOfPages().equals(requestParams.get("numberOfPages")));
-        assertThat(savedBook.getPrice().equals(requestParams.get("price")));
-        assertThat(savedBook.getSubtitle() == null);
-        assertThat(savedBook.getDescription() == null);
-        assertThat(savedBook.getImageUrl() == null);
+        assertThat(savedBook.getIsbn().equals(requestParams.get("isbn"))).isTrue();
+        assertThat(savedBook.getTitle().equals(requestParams.get("title"))).isTrue();
+        assertThat(savedBook.getAuthors().equals(requestParams.get("authors"))).isTrue();
+        assertThat(savedBook.getPublisher().equals(requestParams.get("publisher"))).isTrue();
+        assertThat(savedBook.getPublicationYear().equals(requestParams.get("publicationYear"))).isTrue();
+        assertThat(savedBook.getNumberOfPages().equals(requestParams.get("numberOfPages"))).isTrue();
+        assertThat(savedBook.getPrice().equals(BigDecimal.valueOf((double) requestParams.get("price")))).isTrue();
+        assertThat(savedBook.getSubtitle() == null).isTrue();
+        assertThat(savedBook.getDescription() == null).isTrue();
+        assertThat(savedBook.getImageUrl() == null).isTrue();
     }
 
 
@@ -210,16 +211,16 @@ class CatalogControllerIT {
                 .extract()
                 .as(Book.class);
 
-        assertThat(updatedBook.getIsbn().equals(requestParams.get("isbn")));
-        assertThat(updatedBook.getTitle().equals(requestParams.get("title")));
-        assertThat(updatedBook.getAuthors().equals(requestParams.get("authors")));
-        assertThat(updatedBook.getPublisher().equals(requestParams.get("publisher")));
-        assertThat(updatedBook.getPublicationYear().equals(requestParams.get("publicationYear")));
-        assertThat(updatedBook.getNumberOfPages().equals(requestParams.get("numberOfPages")));
-        assertThat(updatedBook.getPrice().equals(requestParams.get("price")));
-        assertThat(updatedBook.getSubtitle().equals("Some subtitle"));
-        assertThat(updatedBook.getDescription() == null);
-        assertThat(updatedBook.getImageUrl() == null);
+        assertThat(updatedBook.getIsbn().equals(requestParams.get("isbn"))).isTrue();
+        assertThat(updatedBook.getTitle().equals(requestParams.get("title"))).isTrue();
+        assertThat(updatedBook.getAuthors().equals(requestParams.get("authors"))).isTrue();
+        assertThat(updatedBook.getPublisher().equals(requestParams.get("publisher"))).isTrue();
+        assertThat(updatedBook.getPublicationYear().equals(requestParams.get("publicationYear"))).isTrue();
+        assertThat(updatedBook.getNumberOfPages().equals(requestParams.get("numberOfPages"))).isTrue();
+        assertThat(updatedBook.getPrice().equals(BigDecimal.valueOf((double) requestParams.get("price")))).isTrue();
+        assertThat(updatedBook.getSubtitle().equals("Some subtitle")).isTrue();
+        assertThat(updatedBook.getDescription() == null).isTrue();
+        assertThat(updatedBook.getImageUrl() == null).isTrue();
     }
 
     @Test
@@ -287,15 +288,15 @@ class CatalogControllerIT {
 
 
     private JSONObject buildRequestBody() {
-        JSONObject requestParams = new JSONObject();
-        requestParams.put("isbn", "1234567891");
-        requestParams.put("title", "Professional Java Development with the Spring Framework");
-        requestParams.put("authors", "Rod Johnson, Juergen Hoeller, et al.");
-        requestParams.put("publisher", "Wrox");
-        requestParams.put("publicationYear", 2005);
-        requestParams.put("numberOfPages", 676);
-        requestParams.put("price", 676);
-        return requestParams;
+        JSONObject requestBody = new JSONObject();
+        requestBody.put("isbn", "1234567891");
+        requestBody.put("title", "Professional Java Development with the Spring Framework");
+        requestBody.put("authors", "Rod Johnson, Juergen Hoeller, et al.");
+        requestBody.put("publisher", "Wrox");
+        requestBody.put("publicationYear", 2005);
+        requestBody.put("numberOfPages", 676);
+        requestBody.put("price", 42.22);
+        return requestBody;
     }
 
 

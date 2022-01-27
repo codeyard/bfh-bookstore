@@ -28,6 +28,13 @@ public class ErrorInfo {
         this.path = path;
     }
 
+
+    public ErrorInfo(String path) {
+        this();
+        this.message = "Invalid credit card number or type";
+        this.path = path;
+    }
+
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
