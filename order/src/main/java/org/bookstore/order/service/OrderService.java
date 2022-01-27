@@ -4,11 +4,11 @@ import org.bookstore.customer.entity.CreditCard;
 import org.bookstore.customer.entity.Customer;
 import org.bookstore.customer.exception.CustomerNotFoundException;
 import org.bookstore.customer.service.CustomerService;
+import org.bookstore.order.adapter.CatalogAdapter;
+import org.bookstore.order.adapter.PaymentAdapter;
+import org.bookstore.order.controller.OrderRequest;
 import org.bookstore.order.dto.OrderInfo;
-import org.bookstore.order.entity.Order;
-import org.bookstore.order.entity.OrderItem;
-import org.bookstore.order.entity.OrderStatus;
-import org.bookstore.order.entity.Payment;
+import org.bookstore.order.entity.*;
 import org.bookstore.order.exception.OrderAlreadyShippedException;
 import org.bookstore.order.exception.OrderNotFoundException;
 import org.bookstore.order.exception.PaymentFailedException;
@@ -20,11 +20,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 
 /**
  * The interface OrderService defines a service to manage the orders of a bookstore.
@@ -37,13 +34,33 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final CustomerService customerService;
     private final ShippingClient shippingClient;
+    private final CatalogAdapter catalogAdapter;
+    private final PaymentAdapter paymentAdapter;
     @Value("${payment.maxAmount:1000}")
     private BigDecimal maxAmount;
 
-    public OrderService(OrderRepository orderRepository, CustomerService customerService, ShippingClient shippingClient) {
+    public OrderService(OrderRepository orderRepository,
+                        CustomerService customerService,
+                        ShippingClient shippingClient,
+                        CatalogAdapter catalogAdapter,
+                        PaymentAdapter paymentAdapter) {
         this.orderRepository = orderRepository;
         this.customerService = customerService;
         this.shippingClient = shippingClient;
+        this.catalogAdapter = catalogAdapter;
+        this.paymentAdapter = paymentAdapter;
+    }
+
+    public Order prepareOrder(long customerId, OrderRequest orderRequest) throws CustomerNotFoundException, PaymentFailedException {
+        List<OrderItem> orderItems = new ArrayList<>();
+        orderRequest.getItems().forEach(item -> {
+            OrderItem orderItem = new OrderItem();
+            orderItem.setQuantity(item.getQuantity());
+            Book book = catalogAdapter.findBook(item.getIsbn());
+            orderItem.setBook(book);
+            orderItems.add(orderItem);
+        });
+        return placeOrder(customerId, orderItems);
     }
 
     /**
@@ -58,49 +75,23 @@ public class OrderService {
     public Order placeOrder(long customerId, List<OrderItem> items) throws CustomerNotFoundException, PaymentFailedException {
         Customer customer = customerService.findCustomer(customerId);
 
-        // Case 1: Total order amount too high
         BigDecimal totalAmount = items.stream().
-            map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
-        if (totalAmount.compareTo(maxAmount) > 0) {
-            throw new PaymentFailedException(PaymentFailedException.ErrorCode.AMOUNT_EXCEEDS_LIMIT);
-        }
+                map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // Case 2: Credit card expired
-        CreditCard creditCard = customer.getCreditCard();
-        LocalDate initial = LocalDate.of(creditCard.getExpirationYear(), creditCard.getExpirationMonth(), 1);
-        LocalDate expirationDate = initial.with(lastDayOfMonth());
-        if (expirationDate.isBefore(LocalDate.now())) {
-            throw new PaymentFailedException(PaymentFailedException.ErrorCode.CREDIT_CARD_EXPIRED);
-        }
-
-        // Case 3: Credit card number invalid
-        String regex = "(r'^[0-9]{12}$|^[0-9]{14}$|^[0-9]{16}$)";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(creditCard.getNumber().replaceAll("-", ""));
-        if (!matcher.matches()) {
-            throw new PaymentFailedException(PaymentFailedException.ErrorCode.INVALID_CREDIT_CARD);
-        }
+        Payment payment = paymentAdapter.makePayment(customer, customer.getCreditCard(), totalAmount);
 
         Order order = new Order();
         order.setDate(LocalDateTime.now());
         order.setAmount(totalAmount);
         order.setStatus(OrderStatus.ACCEPTED);
         order.setAddress(customer.getAddress());
-
-        Payment payment = new Payment();
-        payment.setDate(LocalDateTime.now());
-        payment.setAmount(totalAmount);
-        payment.setCreditCardNumber(creditCard.getNumber());
-        payment.setTransactionId("1");
-
         order.setPayment(payment);
         order.setCustomer(customer);
         order.setItems(items);
 
         orderRepository.saveAndFlush(order);
         shippingClient.sendShippingOrder(order);
-
 
         return order;
     }
