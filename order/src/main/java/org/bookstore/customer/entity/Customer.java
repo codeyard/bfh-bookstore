@@ -3,6 +3,7 @@ package org.bookstore.customer.entity;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 public class Customer {
@@ -18,6 +19,7 @@ public class Customer {
     @NotNull
     private String lastName;
     @NotNull
+    @NotBlank(message = "Missing email address")
     private String email;
     @NotNull
     @Column(unique = true)

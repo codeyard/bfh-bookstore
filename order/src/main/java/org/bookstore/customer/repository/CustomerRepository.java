@@ -19,4 +19,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
                 or upper(c.lastName) like upper(concat('%', :name, '%'))
         """)
     List<CustomerInfo> findCustomersByName(String name);
+
+    boolean existsByUsername(String username);
 }

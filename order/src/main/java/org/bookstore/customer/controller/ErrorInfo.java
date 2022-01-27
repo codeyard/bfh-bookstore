@@ -1,4 +1,4 @@
-package org.bookstore.error;
+package org.bookstore.customer.controller;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;

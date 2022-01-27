@@ -30,10 +30,12 @@ public class CustomerService {
      * @throws UsernameAlreadyExistsException - if the username already exists
      */
     public Customer registerCustomer(Customer customer) throws UsernameAlreadyExistsException {
-        try {
+        boolean customerExists = customerRepository.existsByUsername(customer.getUsername());
+        if (!customerExists) {
             return customerRepository.saveAndFlush(customer);
-        } catch (DataIntegrityViolationException e) {
-            throw new UsernameAlreadyExistsException();
+        } else {
+            // TODO: Throw different Error?
+            throw new UsernameAlreadyExistsException(customer.getUsername());
         }
     }
 
