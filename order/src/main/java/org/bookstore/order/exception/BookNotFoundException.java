@@ -2,11 +2,11 @@ package org.bookstore.order.exception;
 
 import org.bookstore.order.controller.ErrorInfo;
 
-public class PaymentFailedException extends RuntimeException {
+public class BookNotFoundException extends RuntimeException {
 
     private ErrorInfo errorInfo;
 
-    public PaymentFailedException(ErrorInfo errorInfo) {
+    public BookNotFoundException(ErrorInfo errorInfo) {
         this.errorInfo = errorInfo;
     }
 
