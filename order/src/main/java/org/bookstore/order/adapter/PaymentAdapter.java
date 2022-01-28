@@ -13,13 +13,13 @@ import java.math.BigDecimal;
 @Component
 public class PaymentAdapter {
 
-    private final RestTemplate restTEmplate;
+    private final RestTemplate restTemplate;
 
     @Value("${bookstore.payment.api-url}")
     private String paymentApiUrl;
 
     public PaymentAdapter(RestTemplateBuilder restTemplateBuilder) {
-        this.restTEmplate = restTemplateBuilder
+        this.restTemplate = restTemplateBuilder
                 .errorHandler(new RestTemplateResponseErrorHandler())
                 .build();
     }
@@ -31,7 +31,7 @@ public class PaymentAdapter {
         paymentRequest.setCustomer(customer);
         paymentRequest.setCreditCard(creditCard);
 
-        return this.restTEmplate.postForObject(paymentApiUrl, paymentRequest, Payment.class);
+        return this.restTemplate.postForObject(paymentApiUrl, paymentRequest, Payment.class);
     }
 
 }

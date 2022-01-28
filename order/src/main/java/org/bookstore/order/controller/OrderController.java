@@ -3,12 +3,10 @@ package org.bookstore.order.controller;
 import org.bookstore.customer.exception.CustomerNotFoundException;
 import org.bookstore.order.dto.OrderInfo;
 import org.bookstore.order.entity.Order;
-import org.bookstore.order.entity.OrderItem;
 import org.bookstore.order.exception.OrderAlreadyShippedException;
 import org.bookstore.order.exception.OrderNotFoundException;
 import org.bookstore.order.exception.PaymentFailedException;
 import org.bookstore.order.service.OrderService;
-import org.springframework.format.annotation.NumberFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +34,7 @@ public class OrderController {
     }
 
     @GetMapping(params = {"customerId", "year"}, produces = APPLICATION_JSON_VALUE)
-    public List<OrderInfo> searchOrder(@RequestParam Long customerId, int year) throws CustomerNotFoundException {
+    public List<OrderInfo> searchOrder(@RequestParam Long customerId, @RequestParam int year) throws CustomerNotFoundException {
         return orderService.searchOrders(customerId, year);
     }
 

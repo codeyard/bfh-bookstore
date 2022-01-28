@@ -9,19 +9,19 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class CatalogAdapter {
 
-    private final RestTemplate restTEmplate;
+    private final RestTemplate restTemplate;
 
     @Value("${bookstore.catalog.api-url}")
     private String catalogApiUrl;
 
     public CatalogAdapter(RestTemplateBuilder restTemplateBuilder) {
-        this.restTEmplate = restTemplateBuilder
+        this.restTemplate = restTemplateBuilder
                 .errorHandler(new RestTemplateResponseErrorHandler())
                 .build();
     }
 
     public Book findBook(String isbn) {
-        return restTEmplate.getForObject(catalogApiUrl + "/" + isbn, Book.class);
+        return restTemplate.getForObject(catalogApiUrl + "/" + isbn, Book.class);
     }
 
 
