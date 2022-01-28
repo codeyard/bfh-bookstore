@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -39,9 +40,9 @@ public class CustomerController {
     @PutMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public Customer updateCustomer(
-        @PathVariable long id,
+        @PathVariable @NotNull long id,
         @RequestBody @Valid Customer customer) throws IdNotMatchingException, UsernameNotMatchingException, CustomerNotFoundException {
-        if (!customer.getId().equals(id))
+        if (customer.getId() == null || !customer.getId().equals(id))
             throw new IdNotMatchingException();
         return customerService.updateCustomer(customer);
     }

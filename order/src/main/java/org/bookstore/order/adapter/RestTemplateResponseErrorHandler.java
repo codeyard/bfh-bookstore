@@ -25,7 +25,7 @@ public class RestTemplateResponseErrorHandler implements ResponseErrorHandler {
     public void handleError(ClientHttpResponse httpResponse) throws IOException {
         ErrorInfo errorInfo = new ObjectMapper().readValue(httpResponse.getBody(), ErrorInfo.class);
         switch (httpResponse.getStatusCode()) {
-            case NOT_FOUND ->  throw new BookNotFoundException(errorInfo);
+            case NOT_FOUND -> throw new BookNotFoundException(errorInfo);
             case BAD_REQUEST, UNPROCESSABLE_ENTITY -> throw new PaymentFailedException(errorInfo);
         }
 

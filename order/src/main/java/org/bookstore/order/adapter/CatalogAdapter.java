@@ -16,8 +16,8 @@ public class CatalogAdapter {
 
     public CatalogAdapter(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplate = restTemplateBuilder
-                .errorHandler(new RestTemplateResponseErrorHandler())
-                .build();
+            .errorHandler(new RestTemplateResponseErrorHandler())
+            .build();
     }
 
     public Book findBook(String isbn) {

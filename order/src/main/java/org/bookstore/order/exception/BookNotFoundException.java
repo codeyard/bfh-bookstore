@@ -4,7 +4,7 @@ import org.bookstore.order.controller.ErrorInfo;
 
 public class BookNotFoundException extends RuntimeException {
 
-    private ErrorInfo errorInfo;
+    private final ErrorInfo errorInfo;
 
     public BookNotFoundException(ErrorInfo errorInfo) {
         this.errorInfo = errorInfo;

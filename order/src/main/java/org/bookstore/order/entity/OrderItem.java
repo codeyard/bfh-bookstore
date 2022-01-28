@@ -1,7 +1,6 @@
 package org.bookstore.order.entity;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Entity

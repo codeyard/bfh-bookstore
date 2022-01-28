@@ -5,7 +5,6 @@ import org.bookstore.customer.exception.CustomerNotFoundException;
 import org.bookstore.customer.exception.UsernameAlreadyExistsException;
 import org.bookstore.customer.exception.UsernameNotMatchingException;
 import org.bookstore.customer.repository.CustomerRepository;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 /**

@@ -58,7 +58,7 @@ class OrderControllerTest {
         }
 
         @Test
-        void placeOrder_succesful() throws Exception {
+        void placeOrder_successful() throws Exception {
             Order order = createOrder();
             mockMvc.perform(post(BASE_PATH).contentType(APPLICATION_JSON).content(asJson(orderRequest())))
                     .andExpect(status().isCreated())
@@ -68,7 +68,7 @@ class OrderControllerTest {
         }
 
         @Test
-        void findOrder_succesful() throws Exception {
+        void findOrder_successful() throws Exception {
             Order order = createOrder();
             mockMvc.perform(get(BASE_PATH + "/99951"))
                     .andExpect(status().isOk())
@@ -79,7 +79,7 @@ class OrderControllerTest {
         }
 
         @Test
-        void searchOrders_succesful() throws Exception {
+        void searchOrders_successful() throws Exception {
             mockMvc.perform(get(BASE_PATH + "?customerId=10002&year=2022"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(APPLICATION_JSON))
@@ -89,7 +89,7 @@ class OrderControllerTest {
         }
 
         @Test
-        void cancelOrder_succesful() throws Exception {
+        void cancelOrder_successful() throws Exception {
             OrderService orderService = mock(OrderService.class);
             Mockito.doNothing().when(orderService).cancelOrder(isA(Long.class));
 

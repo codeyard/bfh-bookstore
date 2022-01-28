@@ -1,6 +1,5 @@
 package org.bookstore.order.service;
 
-import org.bookstore.customer.entity.CreditCard;
 import org.bookstore.customer.entity.Customer;
 import org.bookstore.customer.exception.CustomerNotFoundException;
 import org.bookstore.customer.service.CustomerService;
@@ -18,7 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,8 +74,8 @@ public class OrderService {
         Customer customer = customerService.findCustomer(customerId);
 
         BigDecimal totalAmount = items.stream().
-                map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+            map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         Payment payment = paymentAdapter.makePayment(customer, customer.getCreditCard(), totalAmount);
 

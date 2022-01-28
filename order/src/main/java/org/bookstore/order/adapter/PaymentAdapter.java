@@ -20,8 +20,8 @@ public class PaymentAdapter {
 
     public PaymentAdapter(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplate = restTemplateBuilder
-                .errorHandler(new RestTemplateResponseErrorHandler())
-                .build();
+            .errorHandler(new RestTemplateResponseErrorHandler())
+            .build();
     }
 
 
