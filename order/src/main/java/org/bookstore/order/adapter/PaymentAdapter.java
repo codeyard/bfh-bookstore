@@ -19,7 +19,9 @@ public class PaymentAdapter {
     private String paymentApiUrl;
 
     public PaymentAdapter(RestTemplateBuilder restTemplateBuilder) {
-        this.restTEmplate = restTemplateBuilder.build();
+        this.restTEmplate = restTemplateBuilder
+                .errorHandler(new RestTemplateResponseErrorHandler())
+                .build();
     }
 
 

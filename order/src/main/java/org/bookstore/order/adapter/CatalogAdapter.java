@@ -15,13 +15,14 @@ public class CatalogAdapter {
     private String catalogApiUrl;
 
     public CatalogAdapter(RestTemplateBuilder restTemplateBuilder) {
-        this.restTEmplate = restTemplateBuilder.build();
+        this.restTEmplate = restTemplateBuilder
+                .errorHandler(new RestTemplateResponseErrorHandler())
+                .build();
     }
 
     public Book findBook(String isbn) {
         return restTEmplate.getForObject(catalogApiUrl + "/" + isbn, Book.class);
     }
-
 
 
 }
