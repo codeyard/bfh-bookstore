@@ -36,12 +36,12 @@ public class OrderController {
     }
 
     @GetMapping(params = {"customerId", "year"}, produces = APPLICATION_JSON_VALUE)
-    public List<OrderInfo> searchOrder(@RequestParam @NumberFormat Long customerId, @NumberFormat int year) throws CustomerNotFoundException {
+    public List<OrderInfo> searchOrder(@RequestParam Long customerId, int year) throws CustomerNotFoundException {
         return orderService.searchOrders(customerId, year);
     }
 
     @GetMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
-    public Order findOrder(@PathVariable @NumberFormat Long id) throws OrderNotFoundException {
+    public Order findOrder(@PathVariable Long id) throws OrderNotFoundException {
         return orderService.findOrder(id);
     }
 

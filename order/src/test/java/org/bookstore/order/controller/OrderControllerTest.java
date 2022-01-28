@@ -1,6 +1,7 @@
 package org.bookstore.order.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.aspectj.weaver.ast.Or;
 import org.bookstore.customer.entity.Address;
 import org.bookstore.customer.entity.CreditCard;
 import org.bookstore.customer.entity.CreditCardType;
@@ -8,7 +9,9 @@ import org.bookstore.customer.entity.Customer;
 import org.bookstore.customer.exception.CustomerNotFoundException;
 import org.bookstore.order.adapter.CatalogAdapter;
 import org.bookstore.order.adapter.PaymentAdapter;
+import org.bookstore.order.dto.OrderInfo;
 import org.bookstore.order.entity.*;
+import org.bookstore.order.exception.OrderNotFoundException;
 import org.bookstore.order.exception.PaymentFailedException;
 import org.bookstore.order.service.OrderService;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,9 +29,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -49,43 +52,15 @@ class OrderControllerTest {
     private PaymentAdapter paymentAdapter;
 
 
-//        @Test
-//        void getBook_bookNotFound() throws Exception {
-//            Mockito.when(catalogService.findBook(any())).thenThrow(new BookNotFoundException("Book not found"));
-//            mockMvc.perform(get(BASE_PATH + "/1111111111"))
-//                    .andExpect(status().isNotFound());
-//        }
-//
-//        @Test
-//        void findBooks_noneFound() throws Exception {
-//            Mockito.when(catalogService.searchBooks(any())).thenReturn(new ArrayList<>());
-//            mockMvc.perform(get(BASE_PATH + "?keywords=asdfasdfadsfasfd"))
-//                    .andExpect(status().isOk())
-//                    .andExpect(content().contentType(APPLICATION_JSON))
-//                    .andExpect(jsonPath("$").isEmpty());
-//        }
-//
-//        @Test
-//        void addBook_bookAdded() throws Exception {
-//            String newIsbn = "1234567890";
-//            Book book = createBook();
-//            book.setIsbn(newIsbn);
-//            Mockito.when(catalogService.addBook(any())).thenReturn(book);
-//            mockMvc.perform(post(BASE_PATH).contentType(APPLICATION_JSON).content(asJson(book)))
-//                    .andExpect(status().isCreated())
-//                    .andExpect(content().contentType(APPLICATION_JSON))
-//                    .andExpect(jsonPath("isbn").value(newIsbn))
-//                    .andExpect(jsonPath("title").value("Flower Power Letterings"));
-//        }
-
-
-
     @Nested
     class withCorrectSetUp {
         @BeforeEach
-        public void configureMockBean() throws CustomerNotFoundException {
+        public void configureMockBean() throws CustomerNotFoundException, OrderNotFoundException {
             Order order = createOrder();
+            List<OrderInfo> orderInfo = createOrderInfo();
             Mockito.when(orderService.prepareOrder(anyLong(), any())).thenReturn(order);
+            Mockito.when(orderService.findOrder(anyLong())).thenReturn(order);
+            Mockito.when(orderService.searchOrders(anyLong(), anyInt())).thenReturn(orderInfo);
         }
 
         @Test
@@ -98,20 +73,51 @@ class OrderControllerTest {
                     .andExpect(jsonPath("amount").value(order.getAmount()));
         }
 
+        @Test
+        void findOrder_succesful() throws Exception {
+            Order order = createOrder();
+            mockMvc.perform(get(BASE_PATH + "/99951"))
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(jsonPath("id").value(order.getId()))
+                    .andExpect(jsonPath("amount").value(order.getAmount()))
+                    .andExpect(jsonPath("status").value("PROCESSING"));
+        }
+
+        @Test
+        void searchOrders_succesful() throws Exception {
+            mockMvc.perform(get(BASE_PATH + "?customerId=10002&year=2022"))
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(jsonPath("$[0].id").value("1111"))
+                    .andExpect(jsonPath("$[0].amount").value(BigDecimal.valueOf(44.4)))
+                    .andExpect(jsonPath("$[0].status").value("PROCESSING"));
+        }
 
 
     }
 
     @Nested
-    class withCustomerNotFound {
+    class withCustomerNotFoundException {
         @BeforeEach
         public void configureMockBean() throws CustomerNotFoundException {
             Mockito.when(orderService.prepareOrder(anyLong(), any())).thenThrow(new CustomerNotFoundException(213L));
+            Mockito.when(orderService.searchOrders(anyLong(), anyInt())).thenThrow(new CustomerNotFoundException(213L));
         }
 
         @Test
         void placeOrder_ThrowsCustomerNotFoundException() throws Exception {
             mockMvc.perform(post(BASE_PATH).contentType(APPLICATION_JSON).content(asJson(orderRequest())))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("code").value("CUSTOMER_NOT_FOUND"))
+                    .andExpect(jsonPath("path").value("/orders"))
+                    .andExpect(jsonPath("message").value("Customer 213 not found"))
+                    .andExpect(jsonPath("error").value("Not Found"));
+        }
+
+        @Test
+        void searchOrder_ThrowsCustomerNotFoundException() throws Exception {
+            mockMvc.perform(get(BASE_PATH + "?customerId=213&year=2022"))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("code").value("CUSTOMER_NOT_FOUND"))
                     .andExpect(jsonPath("path").value("/orders"))
@@ -143,20 +149,24 @@ class OrderControllerTest {
         }
     }
 
-//            @Test
-//            void getBook_invalidIsbn() throws Exception {
-//                mockMvc.perform(get(BASE_PATH + "/12345"))
-//                        .andExpect(status().isBadRequest());
-//            }
-//
-//            @Test
-//            void findBooks_foundOne() throws Exception {
-//                mockMvc.perform(get(BASE_PATH + "?keywords=flower power"))
-//                        .andExpect(status().isOk())
-//                        .andExpect(content().contentType(APPLICATION_JSON))
-//                        .andExpect(jsonPath("$").isNotEmpty())
-//                        .andExpect(jsonPath("$..title").value("Flower Power Letterings"));
-//            }
+    @Nested
+    class withOrderNotFoundException {
+        @BeforeEach
+        public void configureMockBean() throws OrderNotFoundException {
+            Mockito.when(orderService.findOrder(anyLong())).thenThrow(new OrderNotFoundException(99951L));
+        }
+
+        @Test
+        void findOrder_ThrowsCustomerNotFoundException() throws Exception {
+            mockMvc.perform(get(BASE_PATH + "/99951"))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("code").value("ORDER_NOT_FOUND"))
+                    .andExpect(jsonPath("path").value("/orders/99951"))
+                    .andExpect(jsonPath("message").value("Order 99951 not found"))
+                    .andExpect(jsonPath("error").value("Not Found"));
+        }
+    }
+
 
     private String asJson(Object object) throws Exception {
         return objectMapper.writeValueAsString(object);
@@ -219,6 +229,14 @@ class OrderControllerTest {
         order.setItems(List.of(orderItem));
 
         return order;
+    }
+
+    private List<OrderInfo> createOrderInfo() {
+        Long id = 1111L;
+        BigDecimal amount = BigDecimal.valueOf(44.4);
+        OrderStatus status = OrderStatus.PROCESSING;
+        OrderInfo orderInfo = new OrderInfo(id, LocalDateTime.now(), amount, status);
+        return List.of(orderInfo);
     }
 
 
