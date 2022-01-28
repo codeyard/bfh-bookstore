@@ -45,7 +45,7 @@ public class CustomerService {
      * @throws CustomerNotFoundException - if no customer with the specified identifier exists
      */
     public Customer findCustomer(long id) throws CustomerNotFoundException {
-        return customerRepository.findById(id).orElseThrow(CustomerNotFoundException::new);
+        return customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException(id));
     }
 
     /**

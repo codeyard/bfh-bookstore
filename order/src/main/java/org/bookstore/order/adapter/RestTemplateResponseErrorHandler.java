@@ -1,11 +1,9 @@
 package org.bookstore.order.adapter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javassist.NotFoundException;
 import org.bookstore.order.controller.ErrorInfo;
 import org.bookstore.order.exception.BookNotFoundException;
 import org.bookstore.order.exception.PaymentFailedException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResponseErrorHandler;

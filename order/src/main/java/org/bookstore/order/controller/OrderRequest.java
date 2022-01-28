@@ -44,4 +44,11 @@ public class OrderRequest {
         }
     }
 
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
+
+    public void setItems(List<Item> items) {
+        this.items = items;
+    }
 }
