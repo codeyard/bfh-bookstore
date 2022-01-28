@@ -19,7 +19,7 @@ public class PaymentControllerExceptionHandler extends ResponseEntityExceptionHa
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public ErrorInfo handleBookAlreadyExists(PaymentFailedException ex, HttpServletRequest request) {
+    public ErrorInfo handleInvalidCreditCard(PaymentFailedException ex, HttpServletRequest request) {
         ErrorInfo message = new ErrorInfo(request.getRequestURI());
         message.setStatus(HttpStatus.UNPROCESSABLE_ENTITY);
         message.setCode(ErrorCode.INVALID_CREDIT_CARD);
