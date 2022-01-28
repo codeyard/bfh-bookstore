@@ -2,6 +2,7 @@ package org.bookstore.order.controller;
 
 import org.bookstore.customer.exception.CustomerNotFoundException;
 import org.bookstore.order.exception.BookNotFoundException;
+import org.bookstore.order.exception.OrderAlreadyShippedException;
 import org.bookstore.order.exception.OrderNotFoundException;
 import org.bookstore.order.exception.PaymentFailedException;
 import org.springframework.http.HttpHeaders;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.servlet.http.HttpServletRequest;
 
+import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestControllerAdvice
@@ -57,6 +59,15 @@ public class OrderControllerExceptionHandler extends ResponseEntityExceptionHand
         ErrorInfo message = new ErrorInfo(ex.getMessage(), request.getRequestURI());
         message.setStatus(NOT_FOUND);
         message.setCode(ErrorCode.ORDER_NOT_FOUND);
+        return message;
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(CONFLICT)
+    public ErrorInfo handleOrderAlreadyShipped(OrderAlreadyShippedException ex, HttpServletRequest request) {
+        ErrorInfo message = new ErrorInfo(ex.getMessage(), request.getRequestURI());
+        message.setStatus(CONFLICT);
+        message.setCode(ErrorCode.ORDER_ALREADY_SHIPPED);
         return message;
     }
 

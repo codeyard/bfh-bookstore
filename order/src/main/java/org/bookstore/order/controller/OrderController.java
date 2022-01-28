@@ -47,7 +47,7 @@ public class OrderController {
 
     @PatchMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void cancelOrder(@PathVariable @NumberFormat Long id) throws OrderNotFoundException, OrderAlreadyShippedException {
+    public void cancelOrder(@PathVariable Long id) throws OrderNotFoundException, OrderAlreadyShippedException {
         orderService.cancelOrder(id);
     }
 

@@ -134,7 +134,7 @@ public class OrderService {
         Order order = orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
 
         if (order.getStatus().equals(OrderStatus.SHIPPED)) {
-            throw new OrderAlreadyShippedException();
+            throw new OrderAlreadyShippedException(id);
         }
 
         orderRepository.saveAndFlush(order);

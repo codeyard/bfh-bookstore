@@ -1,16 +1,14 @@
 package org.bookstore.order.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.aspectj.weaver.ast.Or;
 import org.bookstore.customer.entity.Address;
 import org.bookstore.customer.entity.CreditCard;
 import org.bookstore.customer.entity.CreditCardType;
 import org.bookstore.customer.entity.Customer;
 import org.bookstore.customer.exception.CustomerNotFoundException;
-import org.bookstore.order.adapter.CatalogAdapter;
-import org.bookstore.order.adapter.PaymentAdapter;
 import org.bookstore.order.dto.OrderInfo;
 import org.bookstore.order.entity.*;
+import org.bookstore.order.exception.OrderAlreadyShippedException;
 import org.bookstore.order.exception.OrderNotFoundException;
 import org.bookstore.order.exception.PaymentFailedException;
 import org.bookstore.order.service.OrderService;
@@ -30,9 +28,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -46,16 +45,11 @@ class OrderControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private OrderService orderService;
-    @MockBean
-    private CatalogAdapter catalogAdapter;
-    @MockBean
-    private PaymentAdapter paymentAdapter;
-
 
     @Nested
     class withCorrectSetUp {
         @BeforeEach
-        public void configureMockBean() throws CustomerNotFoundException, OrderNotFoundException {
+        public void configureMockBean() throws CustomerNotFoundException, OrderNotFoundException, OrderAlreadyShippedException {
             Order order = createOrder();
             List<OrderInfo> orderInfo = createOrderInfo();
             Mockito.when(orderService.prepareOrder(anyLong(), any())).thenReturn(order);
@@ -92,6 +86,15 @@ class OrderControllerTest {
                     .andExpect(jsonPath("$[0].id").value("1111"))
                     .andExpect(jsonPath("$[0].amount").value(BigDecimal.valueOf(44.4)))
                     .andExpect(jsonPath("$[0].status").value("PROCESSING"));
+        }
+
+        @Test
+        void cancelOrder_succesful() throws Exception {
+            OrderService orderService = mock(OrderService.class);
+            Mockito.doNothing().when(orderService).cancelOrder(isA(Long.class));
+
+            mockMvc.perform(patch(BASE_PATH + "/99951"))
+                    .andExpect(status().isNoContent());
         }
 
 
@@ -152,12 +155,12 @@ class OrderControllerTest {
     @Nested
     class withOrderNotFoundException {
         @BeforeEach
-        public void configureMockBean() throws OrderNotFoundException {
+        public void configureMockBean() throws OrderNotFoundException, OrderAlreadyShippedException {
             Mockito.when(orderService.findOrder(anyLong())).thenThrow(new OrderNotFoundException(99951L));
         }
 
         @Test
-        void findOrder_ThrowsCustomerNotFoundException() throws Exception {
+        void findOrder_ThrowsOrderNotFoundException() throws Exception {
             mockMvc.perform(get(BASE_PATH + "/99951"))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("code").value("ORDER_NOT_FOUND"))
@@ -165,6 +168,39 @@ class OrderControllerTest {
                     .andExpect(jsonPath("message").value("Order 99951 not found"))
                     .andExpect(jsonPath("error").value("Not Found"));
         }
+
+        @Test
+        void cancelOrder_ThrowsOrderNotFoundException() throws Exception {
+            doThrow(new OrderNotFoundException(99951L))
+                    .when(orderService)
+                    .cancelOrder(anyLong());
+            mockMvc.perform(patch(BASE_PATH + "/99951"))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("code").value("ORDER_NOT_FOUND"))
+                    .andExpect(jsonPath("path").value("/orders/99951"))
+                    .andExpect(jsonPath("message").value("Order 99951 not found"))
+                    .andExpect(jsonPath("error").value("Not Found"));
+        }
+    }
+
+    @Nested
+    class withOrderAlreadyShippedException {
+
+
+        @Test
+        void cancelOrder_ThrowsBookAlreadyShippedException() throws Exception {
+            doThrow(new OrderAlreadyShippedException(1000L))
+                    .when(orderService)
+                    .cancelOrder(anyLong());
+
+            mockMvc.perform(patch(BASE_PATH + "/1000"))
+                    .andExpect(status().isConflict())
+                    .andExpect(jsonPath("code").value("ORDER_ALREADY_SHIPPED"))
+                    .andExpect(jsonPath("path").value("/orders/1000"))
+                    .andExpect(jsonPath("message").value("Order 1000 already shipped"))
+                    .andExpect(jsonPath("error").value("Conflict"));
+        }
+
     }
 
 
