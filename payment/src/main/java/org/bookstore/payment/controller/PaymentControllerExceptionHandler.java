@@ -1,7 +1,5 @@
 package org.bookstore.payment.controller;
 
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import org.bookstore.payment.dto.CreditCardType;
 import org.bookstore.payment.exception.PaymentFailedException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,7 +13,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.UnexpectedTypeException;
 
 @RestControllerAdvice
 public class PaymentControllerExceptionHandler extends ResponseEntityExceptionHandler {
@@ -37,28 +34,6 @@ public class PaymentControllerExceptionHandler extends ResponseEntityExceptionHa
         message.setCode(ErrorCode.INVALID_CREDIT_CARD);
         return message;
     }
-
-    /*@ExceptionHandler
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public ErrorInfo handleInvalidCreditCardType(UnexpectedTypeException ex, HttpServletRequest request) {
-        ErrorInfo message = new ErrorInfo(request.getRequestURI());
-        message.setStatus(HttpStatus.UNPROCESSABLE_ENTITY);
-        message.setCode(ErrorCode.INVALID_CREDIT_CARD);
-        return message;
-    }
-
-    @ExceptionHandler(InvalidFormatException.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public ErrorInfo handleInvalidCreditCardType(InvalidFormatException ex, HttpServletRequest request) {
-        String errorMessage = ex.getMessage();
-        if (ex.getTargetType().isAssignableFrom(CreditCardType.class))
-            errorMessage = "Invalid credit card type";
-        ErrorInfo message = new ErrorInfo(errorMessage,
-            ((ServletWebRequest) request).getRequest().getRequestURI());
-        message.setStatus(HttpStatus.UNPROCESSABLE_ENTITY);
-        message.setCode(ErrorCode.INVALID_CREDIT_CARD);
-        return message;
-    }*/
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
