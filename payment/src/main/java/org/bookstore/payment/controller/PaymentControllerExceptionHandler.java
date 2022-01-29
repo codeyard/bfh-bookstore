@@ -4,6 +4,7 @@ import org.bookstore.payment.exception.PaymentFailedException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -33,6 +34,14 @@ public class PaymentControllerExceptionHandler extends ResponseEntityExceptionHa
         message.setStatus(HttpStatus.UNPROCESSABLE_ENTITY);
         message.setCode(ErrorCode.INVALID_CREDIT_CARD);
         return message;
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        ErrorInfo message = new ErrorInfo(((ServletWebRequest) request).getRequest().getRequestURI());
+        message.setStatus(HttpStatus.valueOf(HttpStatus.UNPROCESSABLE_ENTITY.value()));
+        message.setCode(ErrorCode.INVALID_CREDIT_CARD);
+        return new ResponseEntity<>(message, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @Override
