@@ -3,6 +3,9 @@ package org.bookstore.order.repository;
 import org.bookstore.customer.entity.Customer;
 import org.bookstore.customer.exception.CustomerNotFoundException;
 import org.bookstore.customer.repository.CustomerRepository;
+import org.bookstore.order.adapter.PaymentAdapter;
+import org.bookstore.order.controller.ErrorCode;
+import org.bookstore.order.controller.ErrorInfo;
 import org.bookstore.order.dto.OrderInfo;
 import org.bookstore.order.entity.Book;
 import org.bookstore.order.entity.Order;
@@ -15,6 +18,7 @@ import org.bookstore.order.service.OrderService;
 import org.bookstore.shipping.ShippingClient;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,6 +35,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -48,6 +53,9 @@ public class OrderServiceIT {
 
     @MockBean
     private ShippingClient shippingClient;
+
+    @MockBean
+    private PaymentAdapter paymentAdapter;
 
 
     @Value("${payment.maxAmount}")
@@ -96,58 +104,66 @@ public class OrderServiceIT {
 
     }
 
-    // TODO FIX TESTS
 
-//    @Test
-//    void placeOrder_throwsPaymentFailedExceptionBecauseOfAmount() {
-//        List<OrderItem> items = createOrderItems(true);
-//
-//        Assertions.assertTrue(
-//            items.stream()
-//                .map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-//                .reduce(BigDecimal.ZERO, BigDecimal::add)
-//                .compareTo(maxAmount) > 0);
-//
-//        Optional<Customer> optionalCustomer = customerRepository.findById(10020L);
-//
-//        Assertions.assertTrue(optionalCustomer.isPresent());
-//
-//        PaymentFailedException exception = Assertions.assertThrows(PaymentFailedException.class,
-//            () -> orderService.placeOrder(optionalCustomer.get().getId(), items));
-//
-//        Assertions.assertEquals(PaymentFailedException.ErrorCode.AMOUNT_EXCEEDS_LIMIT, exception.getCode());
-//
-//    }
-//
-//    @Test
-//    @Transactional
-//    void placeOrder_throwsPaymentFailedExceptionBecauseOfExpiredCard() {
-//        List<OrderItem> items = createOrderItems(false);
-//
-//        Optional<Customer> optionalCustomer = customerRepository.findById(10020L);
-//        Assertions.assertTrue(optionalCustomer.isPresent());
-//        optionalCustomer.get().getCreditCard().setExpirationYear(LocalDateTime.now().getYear() - 1);
-//        customerRepository.saveAndFlush(optionalCustomer.get());
-//
-//        PaymentFailedException exception = assertThrows(PaymentFailedException.class, () -> orderService.placeOrder(optionalCustomer.get().getId(), items));
-//
-//        Assertions.assertEquals(PaymentFailedException.ErrorCode.CREDIT_CARD_EXPIRED, exception.getCode());
-//    }
-//
-//    @Test
-//    @Transactional
-//    void placeOrder_throwsPaymentFailedExceptionBecauseOfInvalidCardNumber() {
-//        List<OrderItem> items = createOrderItems(false);
-//
-//        Optional<Customer> optionalCustomer = customerRepository.findById(10020L);
-//        Assertions.assertTrue(optionalCustomer.isPresent());
-//        optionalCustomer.get().getCreditCard().setNumber("1111");
-//        customerRepository.saveAndFlush(optionalCustomer.get());
-//
-//        PaymentFailedException exception = assertThrows(PaymentFailedException.class, () -> orderService.placeOrder(optionalCustomer.get().getId(), items));
-//        Assertions.assertEquals(PaymentFailedException.ErrorCode.INVALID_CREDIT_CARD, exception.getCode());
-//
-//    }
+    @Test
+    void placeOrder_throwsPaymentFailedExceptionBecauseOfInvalidCardOrType() {
+        List<OrderItem> items = createOrderItems(true);
+
+        Assertions.assertTrue(
+            items.stream()
+                .map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .compareTo(maxAmount) > 0);
+
+        Optional<Customer> optionalCustomer = customerRepository.findById(10020L);
+
+        Assertions.assertTrue(optionalCustomer.isPresent());
+
+        ErrorInfo errorInfo = new ErrorInfo();
+        errorInfo.setTimestamp(LocalDateTime.now());
+        errorInfo.setStatus(422);
+        errorInfo.setError("Unprocessable Entity");
+        errorInfo.setMessage("Invalid credit card number or type");
+        errorInfo.setPath("/payments");
+        errorInfo.setCode(ErrorCode.INVALID_CREDIT_CARD);
+
+        Mockito.when(paymentAdapter.makePayment(any(), any(), any())).thenThrow(new PaymentFailedException(errorInfo));
+
+        PaymentFailedException exception = Assertions.assertThrows(PaymentFailedException.class,
+            () -> orderService.placeOrder(optionalCustomer.get().getId(), items));
+
+        Assertions.assertEquals(ErrorCode.INVALID_CREDIT_CARD, exception.getErrorInfo().getCode());
+        Assertions.assertEquals("/payments", exception.getErrorInfo().getPath());
+        Assertions.assertEquals(422, exception.getErrorInfo().getStatus());
+        Assertions.assertEquals("Invalid credit card number or type", exception.getErrorInfo().getMessage());
+
+    }
+
+    @Test
+    void placeOrder_throwsPaymentFailedExceptionBecauseOfInvalidPaymentData() {
+        List<OrderItem> items = createOrderItems(false);
+
+        Optional<Customer> optionalCustomer = customerRepository.findById(10020L);
+        Assertions.assertTrue(optionalCustomer.isPresent());
+        optionalCustomer.get().getCreditCard().setExpirationYear(LocalDateTime.now().getYear() - 1);
+        customerRepository.saveAndFlush(optionalCustomer.get());
+
+        ErrorInfo errorInfo = new ErrorInfo();
+        errorInfo.setTimestamp(LocalDateTime.now());
+        errorInfo.setStatus(400);
+        errorInfo.setError("Bad Request");
+        errorInfo.setMessage("Missing payment amount");
+        errorInfo.setPath("/payments");
+
+        Mockito.when(paymentAdapter.makePayment(any(), any(), any())).thenThrow(new PaymentFailedException(errorInfo));
+        PaymentFailedException exception = assertThrows(PaymentFailedException.class, () -> orderService.placeOrder(optionalCustomer.get().getId(), items));
+
+        Assertions.assertEquals("/payments", exception.getErrorInfo().getPath());
+        Assertions.assertEquals(400, exception.getErrorInfo().getStatus());
+        Assertions.assertEquals("Missing payment amount", exception.getErrorInfo().getMessage());
+        Assertions.assertEquals("Bad Request", exception.getErrorInfo().getError());
+
+    }
 
     @Test
     @Transactional
@@ -156,7 +172,6 @@ public class OrderServiceIT {
 
         assertThrows(CustomerNotFoundException.class, () -> orderService.placeOrder(100030L, items));
     }
-
 
     @Test
     void findOrder_successful() throws OrderNotFoundException {
