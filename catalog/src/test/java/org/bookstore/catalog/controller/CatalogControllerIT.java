@@ -61,7 +61,7 @@ class CatalogControllerIT {
                 .body("$", hasKey("timestamp"))
                 .body("status", equalTo(400))
                 .body("error", equalTo("Bad Request"))
-                .body("message", equalTo("getBook.isbn: ISBN is not valid"))
+                .body("message", equalTo("ISBN is not valid"))
                 .body("path", equalTo("/books/11111"));
     }
 
@@ -118,7 +118,7 @@ class CatalogControllerIT {
                 .body("$", hasKey("timestamp"))
                 .body("status", equalTo(400))
                 .body("error", equalTo("Bad Request"))
-                .body("message", equalTo("findBooks.keywords: must not be empty"))
+                .body("message", equalTo("Keywords must not be empty"))
                 .body("path", equalTo("/books"))
                 .body("$", not(hasKey("code")));
     }
@@ -238,7 +238,7 @@ class CatalogControllerIT {
                 .body("$", hasKey("timestamp"))
                 .body("status", equalTo(400))
                 .body("error", equalTo("Bad Request"))
-                .body("message", equalTo("updateBook.isbn: ISBN is not valid"))
+                .body("message", equalTo("ISBN is not valid"))
                 .body("path", equalTo("/books/11111"));
     }
 

@@ -118,7 +118,7 @@ public class OrderServiceIT {
 //        Assertions.assertEquals(PaymentFailedException.ErrorCode.AMOUNT_EXCEEDS_LIMIT, exception.getCode());
 //
 //    }
-
+//
 //    @Test
 //    @Transactional
 //    void placeOrder_throwsPaymentFailedExceptionBecauseOfExpiredCard() {
@@ -133,7 +133,7 @@ public class OrderServiceIT {
 //
 //        Assertions.assertEquals(PaymentFailedException.ErrorCode.CREDIT_CARD_EXPIRED, exception.getCode());
 //    }
-
+//
 //    @Test
 //    @Transactional
 //    void placeOrder_throwsPaymentFailedExceptionBecauseOfInvalidCardNumber() {

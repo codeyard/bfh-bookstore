@@ -35,7 +35,6 @@ public class ErrorInfo {
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
-
     public int getStatus() {
         return status;
     }
@@ -43,6 +42,10 @@ public class ErrorInfo {
     public void setStatus(HttpStatus status) {
         this.error = status.getReasonPhrase();
         this.status = status.value();
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public String getError() {

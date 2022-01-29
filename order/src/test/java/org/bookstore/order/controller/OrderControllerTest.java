@@ -211,7 +211,7 @@ class OrderControllerTest {
     private OrderRequest orderRequest() {
         OrderRequest orderRequest = new OrderRequest();
         orderRequest.setCustomerId(99951L);
-        OrderRequest.Item orderItem = new OrderRequest.Item();
+        Item orderItem = new Item();
         orderItem.setIsbn("1234567890");
         orderItem.setQuantity(1);
         orderRequest.setItems(List.of(orderItem));

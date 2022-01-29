@@ -37,7 +37,7 @@ public class CatalogController {
     }
 
     @GetMapping(params = "keywords", produces = APPLICATION_JSON_VALUE)
-    public List<Book> findBooks(@RequestParam @NotEmpty String keywords) {
+    public List<Book> findBooks(@RequestParam @NotEmpty(message = "Keywords must not be empty") String keywords) {
         return catalogService.searchBooks(keywords);
     }
 

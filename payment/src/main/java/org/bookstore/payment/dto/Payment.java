@@ -10,7 +10,6 @@ public class Payment {
     private String creditCardNumber;
     private String transactionId;
 
-    // TODO Add Order entity? (as according to API documentation)
 
     // <editor-fold desc="Getter and Setter">
 

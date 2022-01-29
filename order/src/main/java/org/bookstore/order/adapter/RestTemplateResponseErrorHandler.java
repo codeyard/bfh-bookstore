@@ -1,6 +1,7 @@
 package org.bookstore.order.adapter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.bookstore.order.controller.ErrorInfo;
 import org.bookstore.order.exception.BookNotFoundException;
 import org.bookstore.order.exception.PaymentFailedException;
@@ -23,7 +24,10 @@ public class RestTemplateResponseErrorHandler implements ResponseErrorHandler {
 
     @Override
     public void handleError(ClientHttpResponse httpResponse) throws IOException {
-        ErrorInfo errorInfo = new ObjectMapper().readValue(httpResponse.getBody(), ErrorInfo.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+
+        ErrorInfo errorInfo = objectMapper.readValue(httpResponse.getBody(), ErrorInfo.class);
         switch (httpResponse.getStatusCode()) {
             case NOT_FOUND -> throw new BookNotFoundException(errorInfo);
             case BAD_REQUEST, UNPROCESSABLE_ENTITY -> throw new PaymentFailedException(errorInfo);

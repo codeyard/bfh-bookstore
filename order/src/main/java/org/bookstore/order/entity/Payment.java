@@ -24,7 +24,6 @@ public class Payment {
     @NotNull
     private String transactionId;
 
-    // TODO Add Order entity? (as according to API documentation)
 
     // <editor-fold desc="Getter and Setter">
 

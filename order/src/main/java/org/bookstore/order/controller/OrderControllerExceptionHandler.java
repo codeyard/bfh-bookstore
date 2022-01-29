@@ -47,7 +47,7 @@ public class OrderControllerExceptionHandler extends ResponseEntityExceptionHand
     @ExceptionHandler
     @ResponseStatus(NOT_FOUND)
     public ErrorInfo handleBookNotFound(BookNotFoundException ex, HttpServletRequest request) {
-        ErrorInfo message = new ErrorInfo(ex.getMessage(), request.getRequestURI());
+        ErrorInfo message = new ErrorInfo(ex.getErrorInfo().getMessage(), request.getRequestURI());
         message.setStatus(NOT_FOUND);
         message.setCode(ErrorCode.BOOK_NOT_FOUND);
         return message;

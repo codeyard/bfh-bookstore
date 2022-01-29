@@ -15,7 +15,10 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import java.util.Arrays;
+import java.util.Optional;
 
 @RestControllerAdvice
 public class CatalogControllerExceptionHandler extends ResponseEntityExceptionHandler {
@@ -56,9 +59,12 @@ public class CatalogControllerExceptionHandler extends ResponseEntityExceptionHa
 
     @ExceptionHandler(value = {ConstraintViolationException.class})
     public ResponseEntity<Object> handleConstraint(ConstraintViolationException ex, WebRequest request ) {
-        ErrorInfo message = new ErrorInfo(ex.getMessage(),
-                ((ServletWebRequest)request).getRequest().getRequestURI());
+        Optional<String> firstViolation = ex.getConstraintViolations().stream().map(ConstraintViolation::getMessageTemplate).findFirst();
+        String errorMessage = firstViolation.orElse(ex.getMessage());
+        ErrorInfo message = new ErrorInfo(errorMessage,
+                ((ServletWebRequest) request).getRequest().getRequestURI());
         message.setStatus(HttpStatus.valueOf(HttpStatus.BAD_REQUEST.value()));
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+
     }
 }

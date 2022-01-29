@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import javax.xml.ws.Holder;
 import java.math.BigDecimal;
-// TODO CHECK LOGGING OF SOAP REQUESTS
 @Service
 public class PaymentService {
 
