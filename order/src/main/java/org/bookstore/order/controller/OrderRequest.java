@@ -1,20 +1,22 @@
 package org.bookstore.order.controller;
 
 
-import javax.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
+@Validated
 public class OrderRequest {
 
-    @NotNull(message = "Missing customerId")
+    @NotEmpty(message = "Missing customerId")
     private Long customerId;
-    @NotNull(message = "Missing items")
+    @NotEmpty(message = "Missing items")
     private List<Item> items;
 
     public Long getCustomerId() {
         return customerId;
     }
-
 
     public List<Item> getItems() {
         return items;

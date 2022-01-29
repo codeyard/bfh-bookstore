@@ -1,12 +1,11 @@
 package org.bookstore.order.controller;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.NotEmpty;
 
 public class Item {
-    @NotNull(message = "Missing item isbn")
+    @NotEmpty(message = "Missing item isbn")
     private String isbn;
-    @NotNull(message = "Missing item quantity")
+    @NotEmpty(message = "Missing item quantity")
     private Integer quantity;
 
     public String getIsbn() {
