@@ -1,13 +1,22 @@
 package org.bookstore.payment.dto;
 
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+@Validated
 public class CreditCard {
 
-    @NotNull(message = "Missing credit card type") private CreditCardType type;
-    @NotNull(message = "Missing credit card number") private String number;
-    @NotNull(message = "Missing expiration month") private Integer expirationMonth;
-    @NotNull(message = "Missing expiration year") private Integer expirationYear;
+    @Valid @NotNull(message = "Missing credit card type")
+    private CreditCardType type;
+    @NotEmpty(message = "Missing credit card number")
+    private String number;
+    @NotNull(message = "Missing expiration month")
+    private Integer expirationMonth;
+    @NotNull(message = "Missing expiration year")
+    private Integer expirationYear;
 
 
     //<editor-fold desc="Getter and Setter">

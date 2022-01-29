@@ -33,7 +33,7 @@ class PaymentControllerIT {
     }
 
     @Test
-    void makePayment_succesful() {
+    void makePayment_successful() {
         JSONObject requestParams = buildRequestBody();
 
 
@@ -72,7 +72,6 @@ class PaymentControllerIT {
                 .body("error", equalTo("Bad Request"))
                 .body("message", equalTo("Missing payment amount"))
                 .body("path", equalTo(BASE_PATH));
-
     }
 
     @Test
@@ -98,7 +97,6 @@ class PaymentControllerIT {
                 .body("message", equalTo("Invalid credit card number or type"))
                 .body("path", equalTo(BASE_PATH))
                 .body("code", equalTo("INVALID_CREDIT_CARD"));
-
     }
 
 

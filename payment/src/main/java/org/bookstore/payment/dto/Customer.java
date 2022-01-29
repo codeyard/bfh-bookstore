@@ -1,13 +1,21 @@
 package org.bookstore.payment.dto;
 
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+@Validated
 public class Customer {
 
-    @NotNull(message = "Missing customer id") private Long id;
-    @NotNull(message = "Missing first name") private String firstName;
-    @NotNull(message = "Missing last name") private String lastName;
-    @NotNull(message = "Missing email") private String email;
+    @NotNull(message = "Missing customer id")
+    private Long id;
+    @NotEmpty(message = "Missing first name")
+    private String firstName;
+    @NotEmpty(message = "Missing last name")
+    private String lastName;
+    @NotEmpty(message = "Missing email")
+    private String email;
 
 
     // <editor-fold desc="Getter and Setter">
