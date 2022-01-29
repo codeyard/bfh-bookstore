@@ -9,7 +9,8 @@ import javax.validation.constraints.NotNull;
 @Validated
 public class CreditCard {
 
-    @Valid @NotNull(message = "Missing credit card type")
+    @Valid
+    @NotNull(message = "Missing credit card type")
     private CreditCardType type;
     @NotEmpty(message = "Missing credit card number")
     private String number;

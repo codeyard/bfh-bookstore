@@ -1,6 +1,9 @@
 package org.bookstore.payment;
 
-import org.bookstore.payment.dto.*;
+import org.bookstore.payment.dto.CreditCard;
+import org.bookstore.payment.dto.CreditCardType;
+import org.bookstore.payment.dto.Customer;
+import org.bookstore.payment.dto.Payment;
 import org.bookstore.payment.exception.PaymentFailedException;
 import org.bookstore.payment.service.PaymentService;
 import org.junit.jupiter.api.Assertions;

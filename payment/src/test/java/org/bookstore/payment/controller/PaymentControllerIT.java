@@ -38,14 +38,14 @@ class PaymentControllerIT {
 
 
         Payment successfulPayment = given()
-                .log()
-                .all()
-                .body(requestParams.toJSONString())
-                .contentType(ContentType.JSON)
-                .when().post(BASE_PATH)
-                .then().statusCode(OK.value())
-                .extract()
-                .as(Payment.class);
+            .log()
+            .all()
+            .body(requestParams.toJSONString())
+            .contentType(ContentType.JSON)
+            .when().post(BASE_PATH)
+            .then().statusCode(OK.value())
+            .extract()
+            .as(Payment.class);
 
         assertThat(successfulPayment.getDate().getDayOfMonth()).isEqualTo(LocalDate.now().getDayOfMonth());
         assertThat(successfulPayment.getDate().getMonth()).isEqualTo(LocalDate.now().getMonth());
@@ -61,17 +61,17 @@ class PaymentControllerIT {
         requestParams.remove("amount");
 
         given()
-                .log()
-                .all()
-                .body(requestParams.toJSONString())
-                .contentType(ContentType.JSON)
-                .when().post(BASE_PATH)
-                .then().statusCode(BAD_REQUEST.value())
-                .body("$", hasKey("timestamp"))
-                .body("status", equalTo(400))
-                .body("error", equalTo("Bad Request"))
-                .body("message", equalTo("Missing payment amount"))
-                .body("path", equalTo(BASE_PATH));
+            .log()
+            .all()
+            .body(requestParams.toJSONString())
+            .contentType(ContentType.JSON)
+            .when().post(BASE_PATH)
+            .then().statusCode(BAD_REQUEST.value())
+            .body("$", hasKey("timestamp"))
+            .body("status", equalTo(400))
+            .body("error", equalTo("Bad Request"))
+            .body("message", equalTo("Missing payment amount"))
+            .body("path", equalTo(BASE_PATH));
     }
 
     @Test
@@ -85,20 +85,19 @@ class PaymentControllerIT {
         requestParams.put("creditCard", invalidCreditCard);
 
         given()
-                .log()
-                .all()
-                .body(requestParams.toJSONString())
-                .contentType(ContentType.JSON)
-                .when().post(BASE_PATH)
-                .then().statusCode(UNPROCESSABLE_ENTITY.value())
-                .body("$", hasKey("timestamp"))
-                .body("status", equalTo(422))
-                .body("error", equalTo("Unprocessable Entity"))
-                .body("message", equalTo("Invalid credit card number or type"))
-                .body("path", equalTo(BASE_PATH))
-                .body("code", equalTo("INVALID_CREDIT_CARD"));
+            .log()
+            .all()
+            .body(requestParams.toJSONString())
+            .contentType(ContentType.JSON)
+            .when().post(BASE_PATH)
+            .then().statusCode(UNPROCESSABLE_ENTITY.value())
+            .body("$", hasKey("timestamp"))
+            .body("status", equalTo(422))
+            .body("error", equalTo("Unprocessable Entity"))
+            .body("message", equalTo("Invalid credit card number or type"))
+            .body("path", equalTo(BASE_PATH))
+            .body("code", equalTo("INVALID_CREDIT_CARD"));
     }
-
 
 
     private JSONObject buildRequestBody() {
