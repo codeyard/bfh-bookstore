@@ -8,9 +8,12 @@ import java.math.BigDecimal;
 
 public class PaymentRequest {
 
-    @NotNull private Customer customer;
-    @NotNull private CreditCard creditCard;
-    @NotNull(message = "Missing payment amount") private BigDecimal amount;
+    @NotNull
+    private Customer customer;
+    @NotNull
+    private CreditCard creditCard;
+    @NotNull(message = "Missing payment amount")
+    private BigDecimal amount;
 
     // <editor-fold desc="Getter and Setter">
 

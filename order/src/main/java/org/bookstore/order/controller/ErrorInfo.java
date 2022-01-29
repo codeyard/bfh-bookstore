@@ -35,6 +35,7 @@ public class ErrorInfo {
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
+
     public int getStatus() {
         return status;
     }

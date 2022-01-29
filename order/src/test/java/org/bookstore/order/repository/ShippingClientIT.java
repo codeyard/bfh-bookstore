@@ -13,8 +13,8 @@ import org.springframework.jms.core.JmsTemplate;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.mockito.Mockito.*;
-
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 
 @SpringBootTest

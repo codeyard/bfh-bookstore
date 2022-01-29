@@ -32,11 +32,11 @@ class JsonMapperTest {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         final String json = "{\n" +
-                "    \"timestamp\": \"2020-06-01T08:20:00\",\n" +
-                "    \"status\": 422,\n" +
-                "    \"error\": \"Internal Server Error\",\n" +
-                "    \"path\": \"/orders/\"\n" +
-                "} }";
+            "    \"timestamp\": \"2020-06-01T08:20:00\",\n" +
+            "    \"status\": 422,\n" +
+            "    \"error\": \"Internal Server Error\",\n" +
+            "    \"path\": \"/orders/\"\n" +
+            "} }";
         ErrorInfo instance = objectMapper.readValue(json, ErrorInfo.class);
 
         assertEquals(LocalDateTime.parse("2020-06-01T08:20:00", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")), instance.getTimestamp());

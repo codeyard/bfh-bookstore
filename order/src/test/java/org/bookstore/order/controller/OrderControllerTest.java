@@ -60,31 +60,31 @@ class OrderControllerTest {
         void placeOrder_successful() throws Exception {
             Order order = createOrder();
             mockMvc.perform(post(BASE_PATH).contentType(APPLICATION_JSON).content(asJson(orderRequest())))
-                    .andExpect(status().isCreated())
-                    .andExpect(content().contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("id").value(order.getId()))
-                    .andExpect(jsonPath("amount").value(order.getAmount()));
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(jsonPath("id").value(order.getId()))
+                .andExpect(jsonPath("amount").value(order.getAmount()));
         }
 
         @Test
         void findOrder_successful() throws Exception {
             Order order = createOrder();
             mockMvc.perform(get(BASE_PATH + "/99951"))
-                    .andExpect(status().isOk())
-                    .andExpect(content().contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("id").value(order.getId()))
-                    .andExpect(jsonPath("amount").value(order.getAmount()))
-                    .andExpect(jsonPath("status").value("PROCESSING"));
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(jsonPath("id").value(order.getId()))
+                .andExpect(jsonPath("amount").value(order.getAmount()))
+                .andExpect(jsonPath("status").value("PROCESSING"));
         }
 
         @Test
         void searchOrders_successful() throws Exception {
             mockMvc.perform(get(BASE_PATH + "?customerId=10002&year=2022"))
-                    .andExpect(status().isOk())
-                    .andExpect(content().contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$[0].id").value("1111"))
-                    .andExpect(jsonPath("$[0].amount").value(BigDecimal.valueOf(44.4)))
-                    .andExpect(jsonPath("$[0].status").value("PROCESSING"));
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id").value("1111"))
+                .andExpect(jsonPath("$[0].amount").value(BigDecimal.valueOf(44.4)))
+                .andExpect(jsonPath("$[0].status").value("PROCESSING"));
         }
 
         @Test
@@ -93,7 +93,7 @@ class OrderControllerTest {
             Mockito.doNothing().when(orderService).cancelOrder(isA(Long.class));
 
             mockMvc.perform(patch(BASE_PATH + "/99951"))
-                    .andExpect(status().isNoContent());
+                .andExpect(status().isNoContent());
         }
 
 
@@ -110,21 +110,21 @@ class OrderControllerTest {
         @Test
         void placeOrder_ThrowsCustomerNotFoundException() throws Exception {
             mockMvc.perform(post(BASE_PATH).contentType(APPLICATION_JSON).content(asJson(orderRequest())))
-                    .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("code").value("CUSTOMER_NOT_FOUND"))
-                    .andExpect(jsonPath("path").value("/orders"))
-                    .andExpect(jsonPath("message").value("Customer 213 not found"))
-                    .andExpect(jsonPath("error").value("Not Found"));
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("code").value("CUSTOMER_NOT_FOUND"))
+                .andExpect(jsonPath("path").value("/orders"))
+                .andExpect(jsonPath("message").value("Customer 213 not found"))
+                .andExpect(jsonPath("error").value("Not Found"));
         }
 
         @Test
         void searchOrder_ThrowsCustomerNotFoundException() throws Exception {
             mockMvc.perform(get(BASE_PATH + "?customerId=213&year=2022"))
-                    .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("code").value("CUSTOMER_NOT_FOUND"))
-                    .andExpect(jsonPath("path").value("/orders"))
-                    .andExpect(jsonPath("message").value("Customer 213 not found"))
-                    .andExpect(jsonPath("error").value("Not Found"));
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("code").value("CUSTOMER_NOT_FOUND"))
+                .andExpect(jsonPath("path").value("/orders"))
+                .andExpect(jsonPath("message").value("Customer 213 not found"))
+                .andExpect(jsonPath("error").value("Not Found"));
         }
     }
 
@@ -143,11 +143,11 @@ class OrderControllerTest {
         @Test
         void placeOrder_ThrowsCustomerNotFoundException() throws Exception {
             mockMvc.perform(post(BASE_PATH).contentType(APPLICATION_JSON).content(asJson(orderRequest())))
-                    .andExpect(status().isUnprocessableEntity())
-                    .andExpect(jsonPath("code").value("INVALID_CREDIT_CARD"))
-                    .andExpect(jsonPath("path").value("/orders"))
-                    .andExpect(jsonPath("message").value("Invalid credit card number or type"))
-                    .andExpect(jsonPath("error").value("Unprocessable Entity"));
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("code").value("INVALID_CREDIT_CARD"))
+                .andExpect(jsonPath("path").value("/orders"))
+                .andExpect(jsonPath("message").value("Invalid credit card number or type"))
+                .andExpect(jsonPath("error").value("Unprocessable Entity"));
         }
     }
 
@@ -161,24 +161,24 @@ class OrderControllerTest {
         @Test
         void findOrder_ThrowsOrderNotFoundException() throws Exception {
             mockMvc.perform(get(BASE_PATH + "/99951"))
-                    .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("code").value("ORDER_NOT_FOUND"))
-                    .andExpect(jsonPath("path").value("/orders/99951"))
-                    .andExpect(jsonPath("message").value("Order 99951 not found"))
-                    .andExpect(jsonPath("error").value("Not Found"));
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("code").value("ORDER_NOT_FOUND"))
+                .andExpect(jsonPath("path").value("/orders/99951"))
+                .andExpect(jsonPath("message").value("Order 99951 not found"))
+                .andExpect(jsonPath("error").value("Not Found"));
         }
 
         @Test
         void cancelOrder_ThrowsOrderNotFoundException() throws Exception {
             doThrow(new OrderNotFoundException(99951L))
-                    .when(orderService)
-                    .cancelOrder(anyLong());
+                .when(orderService)
+                .cancelOrder(anyLong());
             mockMvc.perform(patch(BASE_PATH + "/99951"))
-                    .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("code").value("ORDER_NOT_FOUND"))
-                    .andExpect(jsonPath("path").value("/orders/99951"))
-                    .andExpect(jsonPath("message").value("Order 99951 not found"))
-                    .andExpect(jsonPath("error").value("Not Found"));
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("code").value("ORDER_NOT_FOUND"))
+                .andExpect(jsonPath("path").value("/orders/99951"))
+                .andExpect(jsonPath("message").value("Order 99951 not found"))
+                .andExpect(jsonPath("error").value("Not Found"));
         }
     }
 
@@ -189,15 +189,15 @@ class OrderControllerTest {
         @Test
         void cancelOrder_ThrowsBookAlreadyShippedException() throws Exception {
             doThrow(new OrderAlreadyShippedException(1000L))
-                    .when(orderService)
-                    .cancelOrder(anyLong());
+                .when(orderService)
+                .cancelOrder(anyLong());
 
             mockMvc.perform(patch(BASE_PATH + "/1000"))
-                    .andExpect(status().isConflict())
-                    .andExpect(jsonPath("code").value("ORDER_ALREADY_SHIPPED"))
-                    .andExpect(jsonPath("path").value("/orders/1000"))
-                    .andExpect(jsonPath("message").value("Order 1000 already shipped"))
-                    .andExpect(jsonPath("error").value("Conflict"));
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("code").value("ORDER_ALREADY_SHIPPED"))
+                .andExpect(jsonPath("path").value("/orders/1000"))
+                .andExpect(jsonPath("message").value("Order 1000 already shipped"))
+                .andExpect(jsonPath("error").value("Conflict"));
         }
 
     }
