@@ -38,7 +38,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class OrderControllerTest {
 
-
     private static final String BASE_PATH = "/orders";
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
