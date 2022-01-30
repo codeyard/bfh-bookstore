@@ -22,6 +22,14 @@ The application can be installed by conducting the following steps:
 ```docker-compose up```
 
 
+## REST Endpoints
+
+* [Catalog REST API](http://localhost:8001/books)
+* [Customer REST API](http://localhost:8002/customers)
+* [Order REST API](http://localhost:8002/orders)
+* [Payment REST API](http://localhost:8003/payments)
+
+
 ## Gathering Test Data
 
 [Mockaroo](https://mockaroo.com) was used to generate some random test data.
