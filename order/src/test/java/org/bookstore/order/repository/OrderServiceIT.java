@@ -229,7 +229,7 @@ public class OrderServiceIT {
     }
 
     @Test
-    void cancelOrder_throwsOrderAlreadyShippedExceiption() {
+    void cancelOrder_throwsOrderAlreadyShippedException() {
         assertThrows(OrderAlreadyShippedException.class, () -> orderService.cancelOrder(100016L));
     }
 

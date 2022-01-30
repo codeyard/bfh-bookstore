@@ -43,7 +43,7 @@ To open the notebook you need to have Jupyter Notebook or JupyterLab installed o
 
 ***
 
-## Remnants of persistance
+## Remnants of persistence
 
 ### Install PostgreSQL databases with Docker (deprecated)
 
