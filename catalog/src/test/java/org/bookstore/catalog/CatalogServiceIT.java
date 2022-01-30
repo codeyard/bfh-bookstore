@@ -16,9 +16,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertTrue;
-
-
 @SpringBootTest
 public class CatalogServiceIT {
 
