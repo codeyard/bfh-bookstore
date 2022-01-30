@@ -169,9 +169,7 @@ class OrderRepositoryIT {
         assertEquals(aggregatedCustomerStatistics.get().getTotalAmount(),
             ordersByCustomerAndPeriod.stream().mapToDouble(num -> num.amount().doubleValue()).sum());
 
-        ordersByCustomerAndPeriod.forEach(orderInfo -> {
-            assertEquals(2021, orderInfo.date().getYear());
-        });
+        ordersByCustomerAndPeriod.forEach(orderInfo -> assertEquals(2021, orderInfo.date().getYear()));
 
         assertEquals(2021, aggregatedCustomerStatistics.get().getYear());
     }

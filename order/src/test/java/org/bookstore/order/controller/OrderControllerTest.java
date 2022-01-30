@@ -1,7 +1,6 @@
 package org.bookstore.order.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.dockerjava.api.exception.BadRequestException;
 import org.bookstore.customer.entity.Address;
 import org.bookstore.customer.entity.CreditCard;
 import org.bookstore.customer.entity.CreditCardType;
@@ -49,7 +48,7 @@ class OrderControllerTest {
     @Nested
     class withCorrectSetUp {
         @BeforeEach
-        public void configureMockBean() throws CustomerNotFoundException, OrderNotFoundException, OrderAlreadyShippedException {
+        public void configureMockBean() throws CustomerNotFoundException, OrderNotFoundException {
             Order order = createOrder();
             List<OrderInfo> orderInfo = createOrderInfo();
             Mockito.when(orderService.prepareOrder(anyLong(), any())).thenReturn(order);
@@ -204,7 +203,7 @@ class OrderControllerTest {
     @Nested
     class withOrderNotFoundException {
         @BeforeEach
-        public void configureMockBean() throws OrderNotFoundException, OrderAlreadyShippedException {
+        public void configureMockBean() throws OrderNotFoundException {
             Mockito.when(orderService.findOrder(anyLong())).thenThrow(new OrderNotFoundException(99951L));
         }
 

@@ -55,7 +55,7 @@ public class ShippingOrder {
     }
     //</editor-fold>
 
-    private class Customer {
+    private static class Customer {
         private final Long id;
         private final String firstName;
         private final String lastName;
@@ -87,7 +87,7 @@ public class ShippingOrder {
         //</editor-fold>
     }
 
-    private class Address {
+    private static class Address {
         private final String street;
         private final String city;
         private final String stateProvince;

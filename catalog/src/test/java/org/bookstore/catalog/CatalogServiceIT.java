@@ -51,7 +51,7 @@ public class CatalogServiceIT {
     @Test
     void searchBooks_succeeded() {
         List<Book> bookList = catalogService.searchBooks("shining king bastei");
-        assertTrue(bookList.size() > 0);
+        Assertions.assertTrue(bookList.size() > 0);
     }
 
     @Test
@@ -105,7 +105,7 @@ public class CatalogServiceIT {
         Assertions.assertDoesNotThrow(() -> catalogService.findBook(isbn));
         Assertions.assertTrue(bookRepository.existsByIsbn(isbn));
         Optional<Book> bookByIsbn = bookRepository.findBookByIsbn(isbn);
-        assertTrue(bookByIsbn.isPresent());
+        Assertions.assertTrue(bookByIsbn.isPresent());
         bookByIsbn.ifPresent(book1 -> {
             Assertions.assertEquals("Ein anderes Land", book1.getTitle());
             Assertions.assertEquals("James Baldwin", book1.getAuthors());
@@ -119,7 +119,7 @@ public class CatalogServiceIT {
         List<Book> harry_potter = catalogService.searchBooks("harry potter");
 
         Map<String, Long> collect = harry_potter.stream().collect(Collectors.groupingBy(Book::getIsbn, Collectors.counting()));
-        Assertions.assertTrue(collect.get("3959713983").equals(1L));
+        Assertions.assertEquals(1L, (long) collect.get("3959713983"));
     }
 
     private Book createBook() {
