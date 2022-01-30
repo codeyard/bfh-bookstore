@@ -36,7 +36,6 @@ class PaymentControllerIT {
     void makePayment_successful() {
         JSONObject requestParams = buildRequestBody();
 
-
         Payment successfulPayment = given()
             .log()
             .all()
@@ -56,7 +55,7 @@ class PaymentControllerIT {
     }
 
     @Test
-    void makePayment_invalidPaymentData_throwsError() {
+    void makePayment_missingPaymentAmount() {
         JSONObject requestParams = buildRequestBody();
         requestParams.remove("amount");
 
@@ -75,13 +74,38 @@ class PaymentControllerIT {
     }
 
     @Test
-    void makePayment_paymentFailed_throwsError() {
+    void makePayment_invalidCreditCard_cardExpired() {
         JSONObject requestParams = buildRequestBody();
         JSONObject invalidCreditCard = new JSONObject();
         invalidCreditCard.put("type", "MASTER_CARD");
         invalidCreditCard.put("number", "5400000000000005");
         invalidCreditCard.put("expirationMonth", 2);
         invalidCreditCard.put("expirationYear", LocalDate.now().getYear() - 1);
+        requestParams.put("creditCard", invalidCreditCard);
+
+        given()
+            .log()
+            .all()
+            .body(requestParams.toJSONString())
+            .contentType(ContentType.JSON)
+            .when().post(BASE_PATH)
+            .then().statusCode(UNPROCESSABLE_ENTITY.value())
+            .body("$", hasKey("timestamp"))
+            .body("status", equalTo(422))
+            .body("error", equalTo("Unprocessable Entity"))
+            .body("message", equalTo("Invalid credit card number or type"))
+            .body("path", equalTo(BASE_PATH))
+            .body("code", equalTo("INVALID_CREDIT_CARD"));
+    }
+
+    @Test
+    void makePayment_invalidCreditCard_invalidCreditCardType() {
+        JSONObject requestParams = buildRequestBody();
+        JSONObject invalidCreditCard = new JSONObject();
+        invalidCreditCard.put("type", "HAMSTER_CARD");
+        invalidCreditCard.put("number", "5400000000000005");
+        invalidCreditCard.put("expirationMonth", 2);
+        invalidCreditCard.put("expirationYear", LocalDate.now().getYear() + 1);
         requestParams.put("creditCard", invalidCreditCard);
 
         given()
