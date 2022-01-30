@@ -64,7 +64,7 @@ public class ShippingService {
     public void sendShippingInfo() {
         Optional<ShippingInfo> currentOrder = shippingInfoList.stream().filter(item -> item.getOrderId().equals(shippingOrder.getOrderId())).findFirst();
         if (currentOrder.isPresent()) {
-            logger.info("Send shipping message from shipping service " + currentOrder.get().getOrderId());
+            logger.info("Send shipping message from shipping service. Order id: " + currentOrder.get().getOrderId());
             jmsTemplate.convertAndSend(infoQueue, shippingInfo);
         }
     }
