@@ -40,3 +40,22 @@ The final output csv-files as well as the Python script are provided in `order/s
 
 To open the notebook you need to have Jupyter Notebook or JupyterLab installed on your machine.
 
+
+***
+
+## Remnants of persistance
+
+### Install PostgreSQL databases with Docker (deprecated)
+
+Run the following commands in a console.
+
+**book-catalog**:
+```
+docker run --name postgres-book-catalog -d -p5432:5432 -e POSTGRES_DB=bookcatalog -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=admin postgres
+```
+
+
+**book-orders**:
+```
+docker run --name postgres-book-orders -d -p5401:5432 -e POSTGRES_DB=bookorders -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=admin postgres
+```
