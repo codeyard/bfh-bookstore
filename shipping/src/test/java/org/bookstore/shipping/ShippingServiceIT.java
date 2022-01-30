@@ -46,7 +46,6 @@ public class ShippingServiceIT {
         ShippingOrder shippingOrder = new ShippingOrder();
         shippingOrder.setOrderId(100001L);
 
-        System.out.println("SENDING ORDER....");
         ShippingOrder.Customer customer = new ShippingOrder.Customer(1000L, "Igor", "Stojanovic", "i.stojanovic01@gmail.com");
         shippingOrder.setCustomer(customer);
         jmsTemplate.convertAndSend(orderQueue, shippingOrder);
@@ -54,7 +53,6 @@ public class ShippingServiceIT {
         ShippingInfo processingMessage = (ShippingInfo) jmsTemplate.receiveAndConvert(infoQueue);
         Assertions.assertEquals(ShippingOrder.OrderStatus.PROCESSING, processingMessage.getStatus());
 
-        System.out.println("SENDING CANCELLATION....");
         jmsTemplate.convertAndSend(cancelQueue, 100001L);
         ShippingInfo cancelMessage = (ShippingInfo) jmsTemplate.receiveAndConvert(infoQueue);
         Assertions.assertEquals(ShippingOrder.OrderStatus.CANCELED, cancelMessage.getStatus());

@@ -1,11 +1,14 @@
 package org.bookstore.customer.entity;
 
 import com.sun.istack.NotNull;
+import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 @Entity
+@Validated
 public class Customer {
 
     @Id
@@ -15,20 +18,25 @@ public class Customer {
     private Long id;
 
     @NotNull
+    @NotBlank(message = "Missing first name")
     private String firstName;
     @NotNull
+    @NotBlank(message = "Missing last name")
     private String lastName;
     @NotNull
     @NotBlank(message = "Missing email address")
     private String email;
     @NotNull
     @Column(unique = true)
+    @NotBlank(message = "Missing username")
     private String username;
     @NotNull
     @Embedded()
+    @Valid
     private Address address;
     @NotNull
     @Embedded()
+    @Valid
     private CreditCard creditCard;
 
 

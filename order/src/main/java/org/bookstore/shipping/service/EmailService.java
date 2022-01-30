@@ -2,6 +2,8 @@ package org.bookstore.shipping.service;
 
 import org.bookstore.order.entity.Order;
 import org.bookstore.order.repository.OrderRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
@@ -16,6 +18,8 @@ public class EmailService {
     private final JavaMailSender mailSender;
 
     private final OrderRepository orderRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
 
 
     public EmailService(JavaMailSender mailSender, OrderRepository orderRepository) {
@@ -47,7 +51,7 @@ public class EmailService {
 
             message.setText(finalMessage.toString());
             mailSender.send(message);
-            System.out.println("EMAIL SENT....");
+            logger.info("Email sent to: " + order.getCustomer().getEmail().toLowerCase(Locale.ROOT));
 
         });
     }

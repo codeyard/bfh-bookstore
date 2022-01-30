@@ -6,6 +6,7 @@ import org.bookstore.catalog.exception.IsbnNotMatchingException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -55,6 +56,16 @@ public class CatalogControllerExceptionHandler extends ResponseEntityExceptionHa
         message.setStatus(HttpStatus.valueOf(HttpStatus.BAD_REQUEST.value()));
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        ErrorInfo message = new ErrorInfo(((ServletWebRequest) request).getRequest().getRequestURI());
+        message.setMessage(ex.getMessage());
+        message.setStatus(HttpStatus.valueOf(HttpStatus.BAD_REQUEST.value()));
+        message.setStatus(HttpStatus.valueOf(HttpStatus.BAD_REQUEST.value()));
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    }
+
 
     @ExceptionHandler(value = {ConstraintViolationException.class})
     public ResponseEntity<Object> handleConstraint(ConstraintViolationException ex, WebRequest request) {

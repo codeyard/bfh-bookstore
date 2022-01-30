@@ -1,21 +1,24 @@
 package org.bookstore.customer.entity;
 
-import com.sun.istack.NotNull;
 
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 @Embeddable
 public class CreditCard {
     @NotNull
     @Enumerated(EnumType.STRING)
+    @Valid
     private CreditCardType type;
     @NotNull
+    @NotEmpty(message = "Missing credit card number")
     private String number;
-    @NotNull
+    @NotNull(message = "Missing expiration month")
     private Integer expirationMonth;
-    @NotNull
+    @NotNull(message = "Missing expiration year")
     private Integer expirationYear;
 
 

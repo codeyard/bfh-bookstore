@@ -45,6 +45,12 @@ public class ErrorInfo {
         this.status = status.value();
     }
 
+    public ErrorInfo(String path) {
+        this();
+        this.path = path;
+    }
+
+
     public String getError() {
         return error;
     }

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bookstore.shipping.dto.ShippingInfo;
 import org.bookstore.shipping.dto.ShippingOrder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
@@ -20,6 +22,8 @@ import java.util.Optional;
 
 @Service
 public class ShippingService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ShippingService.class);
 
     private final JmsTemplate jmsTemplate;
 
@@ -50,7 +54,7 @@ public class ShippingService {
     public void receiveCancellation(TextMessage message) throws JMSException {
         Long orderId = Long.valueOf(message.getText());
         Optional<ShippingInfo> optionalShippingInfo = shippingInfoList.stream().filter(item -> Objects.equals(item.getOrderId(), orderId)).findFirst();
-        System.out.println("CANCELLING...");
+        logger.info("Receive cancel message for " + orderId);
         if (optionalShippingInfo.isPresent() && optionalShippingInfo.get().getStatus().equals(ShippingOrder.OrderStatus.PROCESSING)) {
             updateExistingOrder(ShippingOrder.OrderStatus.CANCELED);
             sendShippingInfo();
@@ -60,24 +64,26 @@ public class ShippingService {
     public void sendShippingInfo() {
         Optional<ShippingInfo> currentOrder = shippingInfoList.stream().filter(item -> item.getOrderId().equals(shippingOrder.getOrderId())).findFirst();
         if (currentOrder.isPresent()) {
+            logger.info("Send shipping message from shipping service " + currentOrder.get().getOrderId());
             jmsTemplate.convertAndSend(infoQueue, shippingInfo);
         }
     }
 
     public void processOrder() {
-        System.out.println("PROCESSING....");
+        logger.info("Processing...");
         updateExistingOrder(ShippingOrder.OrderStatus.PROCESSING);
         sendShippingInfo();
         try {
             Thread.sleep(delay);
             shipOrder();
         } catch (InterruptedException e) {
+            logger.error("Error occurred in processOrder: " + e.getMessage());
             throw new RuntimeException();
         }
     }
 
     public void shipOrder() {
-        System.out.println("SHIPPPING....");
+        logger.info("Shipping...");
         Optional<ShippingInfo> optionalShippingInfo = shippingInfoList.stream().filter(item -> Objects.equals(item.getOrderId(), shippingOrder.getOrderId())).findFirst();
         if (optionalShippingInfo.isPresent() && optionalShippingInfo.get().getStatus().equals(ShippingOrder.OrderStatus.PROCESSING)) {
             updateExistingOrder(ShippingOrder.OrderStatus.SHIPPED);

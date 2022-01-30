@@ -56,6 +56,8 @@ public class CustomerControllerExceptionHandler extends ResponseEntityExceptionH
         return message;
     }
 
+
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ErrorInfo message = new ErrorInfo(ex.getFieldError().getDefaultMessage(),
