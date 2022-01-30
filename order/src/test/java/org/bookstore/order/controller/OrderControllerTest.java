@@ -1,6 +1,7 @@
 package org.bookstore.order.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.dockerjava.api.exception.BadRequestException;
 import org.bookstore.customer.entity.Address;
 import org.bookstore.customer.entity.CreditCard;
 import org.bookstore.customer.entity.CreditCardType;
@@ -95,8 +96,57 @@ class OrderControllerTest {
             mockMvc.perform(patch(BASE_PATH + "/99951"))
                 .andExpect(status().isNoContent());
         }
+    }
 
+    @Nested
+    class withMissingItemQuantity {
 
+        @Test
+        void placeOrder_missingItemQuantity() throws Exception {
+            OrderRequest orderRequest = new OrderRequest();
+            orderRequest.setCustomerId(99951L);
+            Item orderItem = new Item();
+            orderItem.setIsbn("1234567890");
+            orderRequest.setItems(List.of(orderItem));
+
+            mockMvc.perform(post(BASE_PATH).contentType(APPLICATION_JSON).content(asJson(orderRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("path").value("/orders"))
+                .andExpect(jsonPath("message").value("Missing item quantity"))
+                .andExpect(jsonPath("error").value("Bad Request"));
+        }
+
+        @Test
+        void placeOrder_itemQuantityNull() throws Exception {
+            OrderRequest orderRequest = new OrderRequest();
+            orderRequest.setCustomerId(99951L);
+            Item orderItem = new Item();
+            orderItem.setIsbn("1234567890");
+            orderItem.setQuantity(null);
+            orderRequest.setItems(List.of(orderItem));
+
+            mockMvc.perform(post(BASE_PATH).contentType(APPLICATION_JSON).content(asJson(orderRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("path").value("/orders"))
+                .andExpect(jsonPath("message").value("Missing item quantity"))
+                .andExpect(jsonPath("error").value("Bad Request"));
+        }
+
+        @Test
+        void placeOrder_itemQuantityNegative() throws Exception {
+            OrderRequest orderRequest = new OrderRequest();
+            orderRequest.setCustomerId(99951L);
+            Item orderItem = new Item();
+            orderItem.setIsbn("1234567890");
+            orderItem.setQuantity(-1);
+            orderRequest.setItems(List.of(orderItem));
+
+            mockMvc.perform(post(BASE_PATH).contentType(APPLICATION_JSON).content(asJson(orderRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("path").value("/orders"))
+                .andExpect(jsonPath("message").value("Missing item quantity"))
+                .andExpect(jsonPath("error").value("Bad Request"));
+        }
     }
 
     @Nested
@@ -141,7 +191,7 @@ class OrderControllerTest {
         }
 
         @Test
-        void placeOrder_ThrowsCustomerNotFoundException() throws Exception {
+        void placeOrder_ThrowsInvalidCreditCardException() throws Exception {
             mockMvc.perform(post(BASE_PATH).contentType(APPLICATION_JSON).content(asJson(orderRequest())))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("code").value("INVALID_CREDIT_CARD"))
