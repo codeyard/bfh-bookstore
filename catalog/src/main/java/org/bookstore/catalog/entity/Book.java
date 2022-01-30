@@ -1,33 +1,36 @@
 package org.bookstore.catalog.entity;
 
-import com.sun.istack.NotNull;
+
+import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 
 @Entity
+@Validated
 public class Book {
 
     @Id
-    @NotNull
+    @NotEmpty(message = "Missing book isbn")
+    @Pattern(regexp = "^(?:ISBN(?:-10)?:? )?(?=[0-9X]{10}$|(?=(?:[0-9]+[- ]){3})[- 0-9X]{13}$)[0-9]{1,5}[- ]?[0-9]+[- ]?[0-9]+[- ]?[0-9X]$", message = "Invalid isbn")
     private String isbn;
     @NotNull
     @NotBlank(message = "Missing book title")
     private String title;
     private String subtitle;
     @NotNull
-    @NotBlank(message = "Authors is mandatory")
+    @NotBlank(message = "Missing book authors")
     private String authors;
     @NotNull
-    @NotBlank(message = "Publisher is mandatory")
+    @NotBlank(message = "Missing book publisher")
     private String publisher;
     private Integer publicationYear;
     private Integer numberOfPages;
     private String description;
     private String imageUrl;
-    @NotNull
+    @NotNull(message = "Missing book price")
     private BigDecimal price;
 
 

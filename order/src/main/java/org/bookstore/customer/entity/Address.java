@@ -1,20 +1,27 @@
 package org.bookstore.customer.entity;
 
 import com.sun.istack.NotNull;
+import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.Embeddable;
+import javax.validation.constraints.NotBlank;
 
 @Embeddable
+@Validated
 public class Address {
     @NotNull
+    @NotBlank(message = "Missing street")
     private String street;
 
     private String stateProvince;
     @NotNull
+    @NotBlank(message = "Missing postal code")
     private String postalCode;
     @NotNull
+    @NotBlank(message = "Missing city")
     private String city;
     @NotNull
+    @NotBlank(message = "Missing country")
     private String country;
 
 

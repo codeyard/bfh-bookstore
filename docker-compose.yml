@@ -50,6 +50,8 @@ services:
             - BOOKSTORE_SHIPPING_INFOQUEUE=ShippingInfoQueue
             - SPRING_MAIL_USERNAME=test584762@gmail.com
             - SPRING_MAIL_PASSWORD=d1e911EWhJ0hUmAMEVu1
+            - BOOKSTORE_SHIPPING_MAIL_ENABLED=true
+
         ports:
             - "8002:8080"
 
@@ -76,7 +78,6 @@ services:
             - BOOKSTORE_SHIPPING_CANCELQUEUE=ShippingCancelQueue
             - BOOKSTORE_SHIPPING_INFOQUEUE=ShippingInfoQueue
             - BOOKSTORE_SHIPPING_PROCESSINGTIME=30000
-#            - BOOKSTORE_SHIPPING_MAIL_ENABLED=true
 
 #    mail:
 #        image: rnwood/smtp4dev:v3
