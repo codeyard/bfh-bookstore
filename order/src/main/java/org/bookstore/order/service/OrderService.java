@@ -12,9 +12,16 @@ import org.bookstore.order.exception.OrderAlreadyShippedException;
 import org.bookstore.order.exception.OrderNotFoundException;
 import org.bookstore.order.exception.PaymentFailedException;
 import org.bookstore.order.repository.OrderRepository;
+import org.bookstore.security.Constants;
 import org.bookstore.shipping.ShippingClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.MethodNotAllowedException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -73,6 +80,11 @@ public class OrderService {
     public Order placeOrder(long customerId, List<OrderItem> items) throws CustomerNotFoundException, PaymentFailedException {
         Customer customer = customerService.findCustomer(customerId);
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!customer.getUsername().equals(authentication.getName())) {
+            throw new RuntimeException();
+        }
+
         BigDecimal totalAmount = items.stream().
             map(item -> item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
             .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -101,6 +113,7 @@ public class OrderService {
      * @return the data of the found order
      * @throws OrderNotFoundException - if no order with the specified identifier exists
      */
+    @PostAuthorize("hasRole('ROLE_EMPLOYEE') OR (hasRole('ROLE_CUSTOMER') && (authentication.name==returnObject.customer.username))")
     public Order findOrder(long id) throws OrderNotFoundException {
         return orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
     }
@@ -114,7 +127,15 @@ public class OrderService {
      * @throws CustomerNotFoundException - if no customer with the specified identifier exists
      */
     public List<OrderInfo> searchOrders(long customerId, int year) throws CustomerNotFoundException {
-        customerService.findCustomer(customerId);
+        Customer customer = customerService.findCustomer(customerId);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication.getAuthorities().contains(Constants.CUSTOMER_AUTHORITY)) {
+            if (!customer.getUsername().equals(authentication.getName())) {
+                throw new RuntimeException();
+            }
+        }
 
         LocalDateTime dateFrom = LocalDateTime.of(year, 1, 1, 0, 0, 0);
         LocalDateTime dateTo = LocalDateTime.of(year, 12, 31, 23, 59, 59);
@@ -133,6 +154,14 @@ public class OrderService {
 
         if (order.getStatus().equals(OrderStatus.SHIPPED)) {
             throw new OrderAlreadyShippedException(id);
+        }
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication.getAuthorities().contains(Constants.CUSTOMER_AUTHORITY)) {
+            if (!order.getCustomer().getUsername().equals(authentication.getName())) {
+                throw new RuntimeException();
+            }
         }
 
         orderRepository.saveAndFlush(order);
