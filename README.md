@@ -1,5 +1,9 @@
 # bookstore 1
 
+Realized as a group work.
+
+Certificate of Advanced Studies (CAS) in Java Microservices Development, Bern University of Applied Sciences.
+
 Team:
 
 * Igor Stojanovic @stoji2
